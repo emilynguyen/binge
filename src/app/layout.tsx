@@ -30,8 +30,8 @@ export default function RootLayout({
       <body
         className={`${instrumentSerif.className} ${dmMono.className} antialiased`}
       >
-        <div class="flex justify-center items-center flex-col h-full p-6 text-center">
-          <div class="w-full h-full max-w-md flex flex-col justify-center items-center gap-10">
+        <div className="flex justify-center items-center flex-col h-full p-6 text-center">
+          <div className="w-full h-full max-w-md flex flex-col justify-center items-center gap-10">
             {children}
             
           </div>
