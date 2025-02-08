@@ -1,9 +1,9 @@
 import React from 'react';
 
 
-const Footer = ({ className }) => {
+const Footer = ({  }) => {
   return (
-    <footer className={className}>
+    <footer>
         <p className="text-xs">Made with &hearts;&#xFE0E; by <a href="http://emilynguyen.co/" target="blank">Emily</a></p>
     </footer>
   );

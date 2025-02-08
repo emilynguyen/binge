@@ -4,7 +4,7 @@ import Input from "@/components/ui/Input";
 export default function Home() {
   return (
    <>
-    <h1 class="mb-10">UntitledProject</h1>
+    <h1 className="mb-10">UntitledProject</h1>
     <Button text="Create a party" className="primary" />
     <h3 className="italic">or</h3>
     <div className="w-full">
