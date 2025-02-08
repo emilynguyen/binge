@@ -8,8 +8,8 @@ export default function Home() {
    <>
     <h1 class="mb-10">UntitledProject</h1>
     <Button text="Create a party" className="primary" />
-    <h3 class="italic">or</h3>
-    <div class="w-full">
+    <h3 className="italic">or</h3>
+    <div className="w-full">
     <Input className="mb-4" placeholder="Enter your code" type="text" />
     <Button text="Join party" className="secondary" />
     </div>
