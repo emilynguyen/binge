@@ -7,13 +7,15 @@ import Header from "@/components/layout/Header";
 import Image from "next/image";
 import Form from "next/form";
 
+import { useState } from 'react';
 import { useRouter } from "next/navigation";
 import { faker } from "@faker-js/faker";
 
-function getCode() {
-  const code = faker.food.adjective();
-  return code.replace(/\s+/g, "-");
-}
+const code = faker.food.adjective().replace(/\s+/g, "-");
+
+const copyIcon = "/icons/copy_40x40.svg";
+const copySuccessIcon = "/icons/copy_success_40x40.svg";
+
 
 /*
 function copyCode() {
@@ -31,6 +33,7 @@ function copyCode() {
 } */
 
 export default function Create() {
+  // End party if user hits back
   const router = useRouter();
   const endParty = () => {
     router.push("/");
@@ -44,6 +47,15 @@ export default function Create() {
     };*/
   };
 
+  // Copy code button copies code and updates icon
+  const [currentCopyIcon, setCopyIcon] = useState(copyIcon);
+  function copyCode() {
+    navigator.clipboard.writeText(code);
+    setCopyIcon(currentCopyIcon === copyIcon ? copySuccessIcon : copyIcon);
+  }
+
+ 
+
   return (
     <>
       <Header text={<i>Creating a party...</i>} />
@@ -54,13 +66,13 @@ export default function Create() {
           id="code"
           name="code"
           className="mb-4"
-          value={getCode()}
+          value={code}
           type="text"
           readOnly
         />
-        <button className="icon absolute right-4">
+        <button className="icon absolute right-4" onClick={copyCode}>
           <Image
-            src="/icons/copy_40x40.svg"
+            src={currentCopyIcon}
             width="40"
             height="40"
             alt="Copy code"

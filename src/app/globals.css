@@ -4,12 +4,14 @@
 
 :root {
   --black: #000000;
-  --cream: #F6E6E2;
-  --cream-10: rgba(246, 230, 226, .1);
-  --cream-30: rgba(246, 230, 226, .3);
-  --cream-50: rgba(246, 230, 226, .5);
+  --cream: #ECE5DD;
+  --cream-10: rgba(236, 229, 221, .1);
+  --cream-30: rgba(236, 229, 221, .3);
+  --cream-50: rgba(236, 229, 221, .5);
   --green: #C9FF77;
-  --accent: var(--green);
+  --red: #E54125;
+
+  --accent: var(--red);
   --primary-typeface: "Instrument Serif";
   --secondary-typeface: "DM Mono";
 }
