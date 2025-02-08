@@ -46,7 +46,7 @@ export default function Create() {
 
   return (
     <>
-      <Header text='${<i>Creating a party...</i>}' />
+      <Header text={<i>Creating a party...</i>} />
 
       <h1 className="mb-4">Share this code with your party: </h1>
       <div className="w-full relative">
