@@ -3,8 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --black: #000000;
+  --cream: #F6E6E2;
+  --cream-30: rgba(246, 230, 226, .3);
+  --cream-50: rgba(246, 230, 226, .5);
+  --green: #C9FF77;
+  --accent: var(--green);
+  --primary-typeface: "Instrument Serif";
+  --secondary-typeface: "DM Mono";
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,8 +20,79 @@
   }
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--cream);
+  background: var(--black);
+  font-size: 1rem;
+  text-underline-offset: 24%;
+
+}
+
+button {
+  height: 4.5rem;
+  border-radius: 4.5rem;
+  padding: 0 2.5rem;
+  width: 100%;
+}
+
+button.primary {
+  background-color: var(--accent);
+  color: var(--black);
+}
+
+button.secondary {
+  background-color: var(--cream-30);
+  color: var(--cream);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--primary-typeface);
+}
+
+h1 {
+  font-size: 3.5rem; /* 56 */
+}
+
+h2 {
+  font-size: 2.5rem; /* 40 */
+}
+
+h3 {
+  font-size: 1.5rem; /* 24 */
+}
+
+h5 {
+  font-size: 1.125rem; /* 18 */
+}
+
+input {
+  height: 4.5rem;
+  border-radius: .5rem;
+  width: 100%;
+  padding: 0 1.5rem;
+  border: 1px var(--cream-30) solid;
+  background-color: transparent;
+  text-align: center;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--cream);
+}
+
+::placeholder {
+  color: var(--cream-50) !important;
+  opacity: 1; /* Firefox */
+}
+
+footer {
+  color: var(--cream-50);
+}
+
+a {
+  text-decoration: underline;
 }
