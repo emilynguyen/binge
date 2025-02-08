@@ -1,14 +1,11 @@
 "use client";
 
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+//import Button from "@/components/ui/Button";
+//import Input from "@/components/ui/Input";
 import Header from "@/components/layout/Header";
 
 import Image from "next/image";
 import Form from "next/form";
-import Link from "next/link";
-
-//import CopyIcon from '/icons/copy_40x40.svg';
 
 import { useRouter } from "next/navigation";
 import { faker } from "@faker-js/faker";
@@ -49,11 +46,9 @@ export default function Create() {
 
   return (
     <>
-      <Header text={<i>Creating a party...</i>} />
+      <Header text='${<i>Creating a party...</i>}' />
 
       <h1 className="mb-4">Share this code with your party: </h1>
-      {/* On submission, the input value will be appended to 
-          the URL, e.g. /search?query=abc */}
       <div className="w-full relative">
         <input
           id="code"

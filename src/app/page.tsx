@@ -1,15 +1,7 @@
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+//import Button from "@/components/ui/Button";
+//import Input from "@/components/ui/Input";
 import Form from 'next/form';
-import { faker } from '@faker-js/faker';
 
-function FoodName() {
-  const foodName = faker.food.adjective();
-
-  return (
-      foodName.replace(/\s+/g, '-')
-  );
-}
 
 export default function Home() {
   return (
