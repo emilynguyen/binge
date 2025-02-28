@@ -11,10 +11,53 @@ import { useState } from 'react';
 import { useRouter } from "next/navigation";
 import { faker } from "@faker-js/faker";
 
-const code = faker.food.adjective().replace(/\s+/g, "-");
+
+function generateCode() {
+  return faker.food.adjective().replace(/\s+/g, "-");
+}
+
+let code = generateCode();
+
+
 
 const copyIcon = "/icons/copy_40x40.svg";
 const copySuccessIcon = "/icons/copy_success_40x40.svg";
+
+import { neon } from '@neondatabase/serverless';
+const size = 69;
+
+const currentParties = [];
+
+
+
+/********* firebase **********/
+
+
+
+
+
+// get parties
+
+const validateCode = async () => {
+  const response = await fetch('/api/get-party');
+  const data = await response.json();
+  
+  // Get array of existing parties
+  data.data.forEach(e => {
+   currentParties.push(e.code);
+  });
+
+  // Check that this party code doesn't already exist
+  //console.log(currentParties.includes(code));
+  let uniquePartyCode = false;
+  while (!uniquePartyCode) {
+    code = generateCode();
+    uniquePartyCode = !currentParties.includes(code);
+    console.log(uniquePartyCode);
+  } 
+};
+
+//validateCode();
 
 
 /*
@@ -33,6 +76,7 @@ function copyCode() {
 } */
 
 export default function Create() {
+
   // End party if user hits back
   const router = useRouter();
   const endParty = () => {
@@ -54,7 +98,6 @@ export default function Create() {
     setCopyIcon(currentCopyIcon === copyIcon ? copySuccessIcon : copyIcon);
   }
 
- 
 
   return (
     <>

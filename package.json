@@ -1,5 +1,5 @@
 {
-  "name": "untitled",
+  "name": "binge",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,9 +10,14 @@
   },
   "dependencies": {
     "@faker-js/faker": "^9.4.0",
+    "@neondatabase/serverless": "^0.10.4",
+    "axios": "^1.8.1",
+    "firebase": "^11.3.0",
     "next": "^15.1.6",
+    "pg": "^8.13.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "yelp-fusion": "^3.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

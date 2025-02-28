@@ -1,12 +1,13 @@
 //import Button from "@/components/ui/Button";
 //import Input from "@/components/ui/Input";
+import Swipe from "@/app/swipe/page";
 import Form from 'next/form';
 
 
-export default function Home() {
+const Home = () => {
   return (
    <>
-    <h1 className="mb-10">UntitledProject</h1>
+    <h1 className="mb-10">Binge</h1>
     <Form action="/create" className="w-full">
       {/* On submission, the input value will be appended to 
           the URL, e.g. /search?query=abc */}
@@ -23,3 +24,6 @@ export default function Home() {
     </>
   );
 }
+
+// Temp
+export default Swipe;

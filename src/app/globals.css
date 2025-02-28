@@ -11,7 +11,7 @@
   --green: #C9FF77;
   --red: #E54125;
 
-  --accent: var(--red);
+  --accent: var(--green);
   --primary-typeface: "Instrument Serif";
   --secondary-typeface: "DM Mono";
 }
@@ -23,16 +23,25 @@
   }
 }
 
-html, body {
+html {
   height: 100%;
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
   color: var(--cream);
   background: var(--black);
   font-size: 1rem;
   text-underline-offset: 24%;
+}
 
+main {
+  flex: 1 0;
+}
+footer {
+  flex: 0 0;
 }
 
 button {
@@ -82,6 +91,10 @@ h3 {
 
 h5 {
   font-size: 1.125rem; /* 18 */
+}
+
+p {
+  font-size: .74rem;
 }
 
 input {
