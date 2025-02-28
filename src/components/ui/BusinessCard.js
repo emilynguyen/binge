@@ -1,8 +1,8 @@
 import React from 'react';
+import { motion } from "framer-motion";
+
 import Pill from '@/components/ui/Pill';
 import Stars from '@/components/ui/Stars';
-
-
 
 
 const BusinessCard = ({ name, image, rating, price, categories, location, closing }) => {
@@ -14,7 +14,8 @@ const BusinessCard = ({ name, image, rating, price, categories, location, closin
           url(${image}) no-repeat center / cover`
       };
   return (
-    <div className="min-h-[460px] w-full p-4 rounded-2xl flex grow flex-col justify-between" style={css}>
+    <motion.div initial={{ opacity: 0, y: 0 }} 
+    animate={{ opacity: 1, y: 0 }} className="min-h-[460px] w-full p-4 rounded-2xl flex grow flex-col justify-between" style={css}>
         {/* Top */}
         <div className="">
             <div className="ml-auto flex flex-wrap justify-end gap-2 w-[75%]">
@@ -30,7 +31,7 @@ const BusinessCard = ({ name, image, rating, price, categories, location, closin
             <p className="pb-14">{location} {price && `/ ${price}`}</p>
             <p>{closing && `Closes at ${closing}`}</p>
         </div>
-    </div>
+    </motion.div>
   );
 };
 

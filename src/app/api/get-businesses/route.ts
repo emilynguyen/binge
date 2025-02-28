@@ -8,6 +8,8 @@ export async function GET() {
     return NextResponse.json({ message: 'YELP_API_KEY is not set in environment variables' }, { status: 500 });
   }
 
+
+
   const options = {
     method: 'GET',
     url: 'https://api.yelp.com/v3/businesses/search',

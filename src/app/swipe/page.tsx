@@ -1,50 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
+import getClosingTimeToday from "@/utils/getClosingTimeToday";
 import BusinessCard from '@/components/ui/BusinessCard';
 import Button from '@/components/ui/Button';
 
 const noIcon = "/icons/x_40x40.svg";
 const yesIcon = "/icons/smiley_40x40.svg";
-
-
-/*
- * Converts military time to standard
- */
-function convertMilitaryTimeToStandard(time: string): string {
-  if (!/^\d{4}$/.test(time)) {
-    throw new Error('Invalid time format. Please provide a 4-digit time string.');
-  }
-
-  let hours = parseInt(time.substring(0, 2), 10);
-  const minutes = time.substring(2);
-
-  const period = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12 || 12; // Convert 0 to 12 for midnight and adjust hours for PM
-
-  if (minutes === '00') {
-    return `${hours}${period}`;
-  }
-
-  return `${hours}:${minutes}${period}`;
-}
-
-/*
- * Get closing time from a business
- */
-function getClosingTimeToday(business) {
-  const today = new Date().getDay();
-  const hoursToday = business.business_hours[0].open.filter((hours) => hours.day === today);
-
-  if (hoursToday.length === 0) {
-    return null;
-  }
-
-  // Assuming the last entry for today is the closing time
-  const closingTime = hoursToday[hoursToday.length - 1].end;
-  return convertMilitaryTimeToStandard(closingTime);
-}
-
 
 
 const Swipe = () => {
@@ -56,7 +19,7 @@ const Swipe = () => {
       const response = await axios.get('/api/get-businesses');
       setBusinesses(response.data.businesses);
     } catch (err) {
-      setError('Failed to fetch businesses');
+      setError('Failed to fetch businesses :(');
       console.error(err);
     }
   };
@@ -98,25 +61,28 @@ const businessCardProps = business
     <div className="mb-2">
       <h1 className="mb-4">Binge</h1>
       {business ? (
-        <p>{businesses.length} restaurants left</p>
+        <p>{businesses.length} restaurants left in Oakland</p>
       ) : (
-        <p>... restaurants left</p>
+        <p>&nbsp;</p>
       )}
       </div>
       <div className="w-full h-autoflex flex grow flex-col justify-center gap-4">
-      {error && <p>{error}</p>}
+     
       {business ? (
         <>
         
-          <BusinessCard {...businessCardProps} />
+         
+            <BusinessCard {...businessCardProps} />
+         
           <div className="flex w-full gap-4">
             <Button type="secondary" text="No" icon={noIcon} onClick={handleNoClick} />
             <Button type="primary" text="Yes" icon={yesIcon} onClick={() => handleYesClick(business.url)} />
           </div>
         </>
       ) : (
-        <h3>Loading...</h3>
+        <h3 className="mt-[-8rem] mb-6">Loading...</h3>
       )}
+      {error && <div>{error}</div>}
       </div>
     </>
   );
