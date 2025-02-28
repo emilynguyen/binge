@@ -7,11 +7,11 @@ import Transportation from '@/components/ui/Transportation';
 
 
 
-const BusinessCard = ({ name, image, rating, price, categories, location, closing }) => {
+const BusinessCard = ({ name, image, rating, price, categories, city, coordinates, closing }) => {
     const css = {
         background: `
           linear-gradient(8deg, rgba(0, 0, 0, 0.00) 70%, rgba(0, 0, 0, 0.6) 90%, rgba(0, 0, 0, 0.75) 100%),
-          linear-gradient(180deg, rgba(0, 0, 0, 0.00) 25%, rgba(0, 0, 0, 0.60) 70%, rgba(0, 0, 0, 0.60) 100%),
+          linear-gradient(180deg, rgba(0, 0, 0, 0.00) 25%, rgba(0, 0, 0, 0.55) 55%, rgba(0, 0, 0, 0.65) 100%),
           linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.7) 100%), 
           url(${image}) no-repeat center / cover`
       };
@@ -28,12 +28,12 @@ const BusinessCard = ({ name, image, rating, price, categories, location, closin
             </div>
         </div>
         {/* Bottom */}
-        <div className="flex justify-between gap-[6rem]">
+        <div className="flex justify-between gap-[4rem] flex-grow">
             {/* Bottom left */}
-            <div className="text-left">
+            <div className="text-left self-end">
                 <h2 className="mb-3">{name}</h2>
                 <div className="mb-3"><StarRating rating={rating}/></div>
-                <p className="pb-14">{location} {price && `/ ${price}`}</p>
+                <p className="pb-14">{city} {price && `/ ${price}`}</p>
                 <p>
                     {closing && (
                         <>
@@ -43,10 +43,10 @@ const BusinessCard = ({ name, image, rating, price, categories, location, closin
                 </p>
             </div>
             {/* Bottom right */}
-            <div className="flex flex-col items-center justify-end gap-5">
-                <Transportation type="car" time="10"/>
-                <Transportation type="train" time="10"/>
-                <Transportation type="walk" time="10"/>
+            <div className="flex flex-col self-end items-end h[11.5rem] gap-5">
+                <Transportation type="car" origin="Assembly, Oakland" destination={coordinates}/>
+                <Transportation type="train" origin="Assembly, Oakland" destination={coordinates}/>
+                <Transportation type="walk" origin="Assembly, Oakland" destination={coordinates}/>
             </div>
         </div>
         

@@ -10,6 +10,15 @@ const noIcon = "/icons/x_40x40.svg";
 const yesIcon = "/icons/smiley_40x40.svg";
 
 
+
+
+
+
+
+
+
+
+
 const Swipe = () => {
   const [businesses, setBusinesses] = useState([]);
   const [error, setError] = useState('');
@@ -50,7 +59,8 @@ const businessCardProps = business
       rating: business.rating,
       categories: business.categories,
       price: business.price,
-      location: business.location.city,
+      city: business.location.city,
+      coordinates: business.coordinates.latitude + ", " + business.coordinates.longitude,
       distance: business.distance,
       closing: getClosingTimeToday(business)
     }
