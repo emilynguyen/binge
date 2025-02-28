@@ -1,28 +1,78 @@
-//import Button from "@/components/ui/Button";
-//import Input from "@/components/ui/Input";
-import Swipe from "@/app/swipe/page";
+'use client'
 
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-/*
-const Home = () => {
+function Home() {
+  const [error, setError] = useState(null);
+  const [locationInput, setLocationInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  /*
+   * On focus of location input, get user's location
+   */
+  const handleOnFocus = () => {
+    setLoading(true);
+    setLocationInput('Loading location...');
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+   
+          setLocationInput(`${position.coords.latitude}, ${position.coords.longitude}`);
+          setLoading(false);
+        },
+        (error) => {
+          setError(error.message);
+          setLoading(false);
+        }
+      );
+    } else {
+      setError('Geolocation not supported');
+      setLoading(false);
+    }
+  };
+
+  /*
+   * On change of location input, update the state
+   */
+  const handleInputChange = (e) => {
+    setLocationInput(e.target.value);
+  };
+
+  /*
+   * On submit, go to /swipe
+   */
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (router) {
+      router.push(`/swipe?location=${encodeURIComponent(locationInput)}`);
+    }
+  };
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
-   <>
-    <h1 className="mb-10">Binge</h1>
-    <Form action="/create" className="w-full">
-
-     
-      <button className="primary" type="submit">Create a party</button>
-    </Form>
-    <h3 className="italic">or</h3>    
-    <Form action="/join" className="w-full">
-     
-      <input name="code" className="mb-4" placeholder="Enter your code" type="text" required/>
-      <button className="secondary" type="submit">Join party</button>
-    </Form>
-    </>
+    <div>
+      <form onSubmit={handleSubmit} className="w-full">
+        <input
+          name="location"
+          value={locationInput}
+          className="mb-4"
+          placeholder="Your location"
+          type="text"
+          onFocus={handleOnFocus}
+          onChange={handleInputChange}
+          required
+        />
+        <button className="primary" type="submit" disabled={loading}>Start</button>
+      </form>
+      {error && <div>{error}</div>}
+    </div>
   );
 }
-*/
 
-// Temp
-export default Swipe;
+export default Home;

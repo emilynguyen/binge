@@ -116,7 +116,7 @@ input[readOnly] {
   cursor: default;
   pointer-events: none;
   background-color: var(--cream-10);
-  text-align: left;
+  /*text-align: left; */
 }
 
 ::placeholder {

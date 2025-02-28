@@ -7,7 +7,7 @@ import Transportation from '@/components/ui/Transportation';
 
 
 
-const BusinessCard = ({ name, image, rating, price, categories, city, coordinates, closing }) => {
+const BusinessCard = ({ name, image, rating, price, categories, city, origin, destination, closing }) => {
     const css = {
         background: `
           linear-gradient(8deg, rgba(0, 0, 0, 0.00) 70%, rgba(0, 0, 0, 0.6) 90%, rgba(0, 0, 0, 0.75) 100%),
@@ -44,9 +44,9 @@ const BusinessCard = ({ name, image, rating, price, categories, city, coordinate
             </div>
             {/* Bottom right */}
             <div className="flex flex-col self-end items-end h[11.5rem] gap-5">
-                <Transportation type="car" origin="Assembly, Oakland" destination={coordinates}/>
-                <Transportation type="train" origin="Assembly, Oakland" destination={coordinates}/>
-                <Transportation type="walk" origin="Assembly, Oakland" destination={coordinates}/>
+                {['car', 'train', 'walk'].map(type => (
+                    <Transportation key={type} type={type} origin={origin} destination={destination} />
+                ))}
             </div>
         </div>
         

@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -9,23 +10,16 @@ import Button from '@/components/ui/Button';
 const noIcon = "/icons/x_40x40.svg";
 const yesIcon = "/icons/smiley_40x40.svg";
 
-
-
-
-
-
-
-
-
-
-
 const Swipe = () => {
   const [businesses, setBusinesses] = useState([]);
+  const [location, setLocation] = useState('');
   const [error, setError] = useState('');
 
-  const fetchBusinesses = async () => {
+  const fetchBusinesses = async (location) => {
     try {
-      const response = await axios.get('/api/get-businesses');
+      const response = await axios.get('/api/get-businesses', {
+        params: { location }
+      });
       setBusinesses(response.data.businesses);
     } catch (err) {
       setError('Failed to fetch businesses :(');
@@ -34,69 +28,68 @@ const Swipe = () => {
   };
 
   useEffect(() => {
-    fetchBusinesses();
+    const urlParams = new URLSearchParams(window.location.search);
+    const location = urlParams.get('location');
+
+    if (location) {
+      setLocation(location);
+      fetchBusinesses(location);
+    }
   }, []);
 
-  function handleNoClick() {
+
+  const handleNoClick = () => {
+    const randomIndex = Math.floor(Math.random() * businesses.length);
     setBusinesses([...businesses.slice(0, randomIndex), ...businesses.slice(randomIndex + 1)]);
-  }
-  
-  function handleYesClick(link) {
+  };
+
+  const handleYesClick = (link) => {
     window.open(link, '_blank');
-  }
-  
+  };
 
-// Get random business
-const randomIndex = businesses.length ? Math.floor(Math.random() * businesses.length) : 0;
-const business = businesses[randomIndex];
+  const randomIndex = businesses.length ? Math.floor(Math.random() * businesses.length) : 0;
+  const business = businesses[randomIndex];
 
-console.log(businesses[randomIndex])
-
-const businessCardProps = business
-  ? {
-      name: business.name,
-      image: business.image_url,
-      rating: business.rating,
-      categories: business.categories,
-      price: business.price,
-      city: business.location.city,
-      coordinates: business.coordinates.latitude + ", " + business.coordinates.longitude,
-      distance: business.distance,
-      closing: getClosingTimeToday(business)
-    }
-  : null;
+  const businessCardProps = business
+    ? {
+        name: business.name,
+        image: business.image_url,
+        rating: business.rating,
+        categories: business.categories,
+        price: business.price,
+        city: business.location.city,
+        origin: location,
+        destination: `${business.coordinates.latitude}, ${business.coordinates.longitude}`,
+        distance: business.distance,
+        closing: getClosingTimeToday(business)
+      }
+    : null;
 
   return (
     <>
-    <div className="mb2">
-      {business ? (
-        <p>{businesses.length} restaurants left in Oakland</p>
-      ) : (
-        <p>&nbsp;</p>
-      )}
+      <div className="mb2">
+        {business ? (
+          <p>{businesses.length} cards left</p>
+        ) : (
+          <p>&nbsp;</p>
+        )}
       </div>
-      <div className="w-full h-autoflex flex grow flex-col justify-center gap-4">
-     
-      {business ? (
-        <>
-        
-         
+      <div className="w-full h-auto flex flex-col justify-center gap-4">
+        {business ? (
+          <>
             <BusinessCard {...businessCardProps} />
-         
-          <div className="flex w-full gap-4">
-            <Button type="secondary" text="No" icon={noIcon} onClick={handleNoClick} />
-            <Button type="primary" text="Yes" icon={yesIcon} onClick={() => handleYesClick(business.url)} />
-          </div>
-        </>
-      ) : (
-        <h3 className="mt-[-8rem] mb-6">Loading...</h3>
-      )}
-      {error && <div>{error}</div>}
+            <div className="flex w-full gap-4">
+              <Button type="secondary" text="No" icon={noIcon} onClick={handleNoClick} />
+              <Button type="primary" text="Yes" icon={yesIcon} onClick={() => handleYesClick(business.url)} />
+            </div>
+          </>
+        ) : (
+          <h3 className="mt-[-8rem] mb-6">Loading...</h3>
+        )}
+        {error && <div>{error}</div>}
       </div>
     </>
   );
 };
 
 export default Swipe;
-
-//business.business_hours[0].open[new Date().getDay()].end

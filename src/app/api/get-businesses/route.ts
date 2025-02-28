@@ -1,14 +1,21 @@
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request) {
   const API_KEY = process.env.YELP_API_KEY;
 
   if (!API_KEY) {
     return NextResponse.json({ message: 'YELP_API_KEY is not set in environment variables' }, { status: 500 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const location = searchParams.get('location');
 
+  console.log(location);
+
+  if (!location) {
+    return NextResponse.json({ message: 'Location parameter is required' }, { status: 400 });
+  }
 
   const options = {
     method: 'GET',
@@ -18,7 +25,7 @@ export async function GET() {
       authorization: `Bearer ${API_KEY}`
     },
     params: {
-      location: 'Oakland, CA',
+      location,
       term: 'restaurants',
       radius: 16093,
       sort_by: 'best_match',
