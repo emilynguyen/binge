@@ -5,7 +5,7 @@ import Stars from '@/components/ui/Stars';
 
 
 
-const BusinessCard = ({ name, image, rating, price, categories, distance, location, closing }) => {
+const BusinessCard = ({ name, image, rating, price, categories, location, closing }) => {
     const css = {
         background: `
           linear-gradient(0deg, rgba(0, 0, 0, 0.00) 66.08%, rgba(2, 1, 1, 0.5) 82.66%, rgba(0, 0, 0, 0.60) 100%),

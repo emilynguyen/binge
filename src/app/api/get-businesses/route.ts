@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
+import { NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const API_KEY = process.env.YELP_API_KEY;
 
   if (!API_KEY) {
@@ -33,6 +33,4 @@ export async function GET(req: NextRequest) {
     console.error(errorMessage);
     return NextResponse.json({ message: 'Error fetching data from Yelp', error: errorMessage }, { status: 500 });
   }
-
-  
 }
