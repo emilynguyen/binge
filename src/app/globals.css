@@ -105,6 +105,7 @@ input {
   border: 1px var(--cream-30) solid;
   background-color: transparent;
   text-align: center;
+  text-overflow: ellipsis;
 }
 
 input:focus {

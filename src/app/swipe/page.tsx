@@ -12,6 +12,7 @@ const yesIcon = "/icons/smiley_40x40.svg";
 
 const Swipe = () => {
   const [businesses, setBusinesses] = useState([]);
+  //const [card, setCard] = useState({});
   const [location, setLocation] = useState('');
   const [error, setError] = useState('');
 

@@ -2,9 +2,7 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const origin = searchParams.get('origin');
   const destination = searchParams.get('destination');
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-
-  console.log(destination);
+  const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
 
   if (!origin || !destination) {
@@ -13,7 +11,7 @@ export async function GET(req) {
 
   const fetchDistanceMatrix = async (mode) => {
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=${mode}&key=${apiKey}`
+      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=${mode}&key=${API_KEY}`
     );
     const data = await response.json();
     if (data.rows[0].elements[0].status === 'ZERO_RESULTS') {

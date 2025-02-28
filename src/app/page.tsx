@@ -2,35 +2,47 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import reverseGeocode from "@/utils/reverseGeocode";
+
 
 function Home() {
   const [error, setError] = useState(null);
   const [locationInput, setLocationInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loadingCurrLocation, setLoadingCurrLocation] = useState(false);
+  const [currLocationLoaded, setcurrLocationLoaded] = useState(false);
   const router = useRouter();
 
-  /*
+   /*
    * On focus of location input, get user's location
    */
-  const handleOnFocus = () => {
-    setLoading(true);
+   const handleOnFocus = async () => {
+    // Only retrive current location once
+    if (currLocationLoaded) return;
+    
+    setLoadingCurrLocation(true);
     setLocationInput('Loading location...');
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-   
-          setLocationInput(`${position.coords.latitude}, ${position.coords.longitude}`);
-          setLoading(false);
+        async (position) => {
+          try {
+            const address = await reverseGeocode(position.coords.latitude, position.coords.longitude);
+            setLocationInput(address);
+            setcurrLocationLoaded(true);
+          } catch (error) {
+            setError(error.message);
+          } finally {
+            setLoadingCurrLocation(false);
+          }
         },
         (error) => {
           setError(error.message);
-          setLoading(false);
+          setLoadingCurrLocation(false);
         }
       );
     } else {
       setError('Geolocation not supported');
-      setLoading(false);
+      setLoadingCurrLocation(false);
     }
   };
 
@@ -68,7 +80,7 @@ function Home() {
           onChange={handleInputChange}
           required
         />
-        <button className="primary" type="submit" disabled={loading}>Start</button>
+        <button className="primary" type="submit" disabled={loadingCurrLocation}>Start</button>
       </form>
       {error && <div>{error}</div>}
     </div>
