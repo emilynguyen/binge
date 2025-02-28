@@ -29,7 +29,10 @@ export async function GET(req: NextRequest) {
     const response = await axios.request(options);
     return NextResponse.json(response.data, { status: 200 });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ message: 'Error fetching data from Yelp', error: err.message }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
+    console.error(errorMessage);
+    return NextResponse.json({ message: 'Error fetching data from Yelp', error: errorMessage }, { status: 500 });
   }
+
+  
 }

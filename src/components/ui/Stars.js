@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+
 const fullStar = "/icons/star_full_20x20.svg";
 const halfStar = "/icons/star_half_20x20.svg";
 const emptyStar = "/icons/star_empty_20x20.svg";
@@ -35,7 +37,7 @@ const Stars = ({ rating }) => {
   return (
    <div className="flex items-center">
     {rating !== undefined && generateStarArr(rating).map((star, index) => (
-        <img src={star} key={index} />
+        <Image src={star} key={index} width="20" height="20" alt="" />
       ))}
       <p className="ml-2 mt-1">{rating}</p>
    </div>
