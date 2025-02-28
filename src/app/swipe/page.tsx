@@ -59,7 +59,7 @@ const businessCardProps = business
   return (
     <>
     <div className="mb-2">
-      <h1 className="mb-4">Binge</h1>
+      <h3 className="mb-4">Binge</h3>
       {business ? (
         <p>{businesses.length} restaurants left in Oakland</p>
       ) : (

@@ -1,15 +1,12 @@
 import React from 'react';
-import Image from 'next/image';
+import Star from "@/components/ui/Star";
 
-const fullStar = "/icons/star_full_20x20.svg";
-const halfStar = "/icons/star_half_20x20.svg";
-const emptyStar = "/icons/star_empty_20x20.svg";
 
 // Return array of 5 stars
-const Stars = ({ rating }) => {
+const StarRating = ({ rating }) => {
    function generateStarArr() {
     // Create star array and default all as empty
-    const starArr = new Array(5).fill(emptyStar);
+    const starArr = new Array(5).fill("empty");
 
     let ratingCounter = Math.round(rating * 2) / 2;
    
@@ -21,11 +18,11 @@ const Stars = ({ rating }) => {
       
       // Check remainders when -1 to determine star
       if (ratingCounter - 1 >= 0) {
-        starArr[i] = fullStar;
+        starArr[i] = "full";
       } else if (ratingCounter - 1 < 0) {
-        starArr[i] = halfStar;
+        starArr[i] = "half";
       } else {
-        starArr[i] = emptyStar;
+        starArr[i] = "empty";
         //return starArr;
       }
       
@@ -35,13 +32,13 @@ const Stars = ({ rating }) => {
   }
 
   return (
-   <div className="flex items-center">
-    {rating !== undefined && generateStarArr(rating).map((star, index) => (
-        <Image src={star} key={index} width="20" height="20" alt="" />
+   <div className={`flex items-center`}>
+    {rating !== undefined && generateStarArr(rating).map((starType, index) => (
+        <Star key={index} type={starType} />
       ))}
-      <p className="ml-2 mt-1">{rating}</p>
+      {/* <p className="ml-2 mt-1">{rating}</p> */}
    </div>
   );
 };
 
-export default Stars;
+export default StarRating;
