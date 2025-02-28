@@ -58,8 +58,7 @@ const businessCardProps = business
 
   return (
     <>
-    <div className="mb-2">
-      <h3 className="mb-4">Binge</h3>
+    <div className="mb2">
       {business ? (
         <p>{businesses.length} restaurants left in Oakland</p>
       ) : (

@@ -10,15 +10,15 @@ import Transportation from '@/components/ui/Transportation';
 const BusinessCard = ({ name, image, rating, price, categories, location, closing }) => {
     const css = {
         background: `
-          linear-gradient(0deg, rgba(0, 0, 0, 0.00) 66.08%, rgba(2, 1, 1, 0.5) 82.66%, rgba(0, 0, 0, 0.60) 100%),
-          linear-gradient(180deg, rgba(0, 0, 0, 0.00) 17.93%, rgba(0, 0, 0, 0.60) 58.97%, rgba(0, 0, 0, 0.85) 100%),
-          linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 59%, rgba(0, 0, 0, 0.65) 100%), 
+          linear-gradient(8deg, rgba(0, 0, 0, 0.00) 70%, rgba(0, 0, 0, 0.6) 90%, rgba(0, 0, 0, 0.75) 100%),
+          linear-gradient(180deg, rgba(0, 0, 0, 0.00) 25%, rgba(0, 0, 0, 0.60) 70%, rgba(0, 0, 0, 0.60) 100%),
+          linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.7) 100%), 
           url(${image}) no-repeat center / cover`
       };
 
   return (
     <motion.div initial={{ opacity: 0, y: 0 }} 
-    animate={{ opacity: 1, y: 0 }} className="min-h-[460px] w-full pr-4 pl-4 pt-6 pb-6 rounded-2xl flex grow flex-col justify-between" style={css}>
+    animate={{ opacity: 1, y: 0 }} className="min-h-[460px] w-full pr-4 pl-4 pt-4 pb-4 rounded-2xl flex grow flex-col justify-between" style={css}>
         {/* Top */}
         <div className="">
             <div className="ml-auto flex flex-wrap justify-end gap-2 w-[75%]">
