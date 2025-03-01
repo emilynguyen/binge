@@ -15,6 +15,8 @@ const Transportation = ({ type, origin, destination }) => {
   const [eta, setEta] = useState('');
 
   const fetchEstimates = async () => {
+    if (!origin || !destination) return;
+
     try {
       const response = await fetch(
         `/api/get-distance?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`

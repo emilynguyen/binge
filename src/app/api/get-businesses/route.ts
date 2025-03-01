@@ -10,8 +10,9 @@ export async function GET(request) {
 
   const { searchParams } = new URL(request.url);
   const location = searchParams.get('location');
+  const offset = searchParams.get('offset');
 
-  console.log(location);
+
 
   if (!location) {
     return NextResponse.json({ message: 'Location parameter is required' }, { status: 400 });
@@ -30,6 +31,7 @@ export async function GET(request) {
       radius: 16093,
       sort_by: 'best_match',
       limit: 50,
+      offset,
       open_now: true
     }
   };

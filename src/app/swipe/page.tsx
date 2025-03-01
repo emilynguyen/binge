@@ -3,46 +3,42 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'
 
-
-import axios from 'axios';
-
-import getClosingTimeToday from "@/utils/getClosingTimeToday";
+import populateRestaurants from "@/utils/populateRestaurants";
 import BusinessCard from '@/components/ui/BusinessCard';
 import Button from '@/components/ui/Button';
 
 const noIcon = "/icons/x_40x40.svg";
 const yesIcon = "/icons/smiley_40x40.svg";
 
+
 const Swipe = () => {
   const [businesses, setBusinesses] = useState([]);
-  //const [card, setCard] = useState({});
+  const [currBusiness, setCurrBusiness] = useState({});
   const [message, setMessage] = useState('...');
   const [error, setError] = useState(false);
   const [location, setLocation] = useState('');
   const router = useRouter()
 
-
-  const fetchBusinesses = async (location) => {
-    try {
-      const response = await axios.get('/api/get-businesses', {
-        params: { location }
-      });
-      setBusinesses(response.data.businesses);
-    } catch (err) {
-      setMessage('Failed to fetch restaurants :(');
-      setError(true);
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const location = urlParams.get('location');
+    const fetchData = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const location = urlParams.get('location');
 
-    if (location) {
-      setLocation(location);
-      fetchBusinesses(location);
-    }
+      if (location) {
+        setLocation(location);
+        try {
+          const fetchedBusinesses = await populateRestaurants(location);
+          setBusinesses(fetchedBusinesses);
+          setCurrBusiness(fetchedBusinesses[0]);
+        } catch (err) {
+          console.log(err);
+          setMessage('Failed to fetch businesses');
+          setError(true);
+        }
+      }
+    };
+
+    fetchData();
   }, []);
 
 
@@ -50,10 +46,17 @@ const Swipe = () => {
    * Click handler for no button / left swipe
    */
   const handleNoClick = () => {
-    const randomIndex = Math.floor(Math.random() * businesses.length);
-    setBusinesses([...businesses.slice(0, randomIndex), ...businesses.slice(randomIndex + 1)]);
+    setBusinesses(prevBusinesses => {
+      const updatedBusinesses = prevBusinesses.slice(1);
+      if (updatedBusinesses.length > 0) {
+        setCurrBusiness(updatedBusinesses[0]);
+      } else {
+        setCurrBusiness(null);
+        setMessage('No more businesses to show');
+      }
+      return updatedBusinesses;
+    });
   };
-
   /*
    * Click handler for yes button / right swipe
    */
@@ -63,40 +66,25 @@ const Swipe = () => {
   };
 
 
-  const randomIndex = businesses.length ? Math.floor(Math.random() * businesses.length) : 0;
-  const business = businesses[randomIndex];
-
-  const businessCardProps = business
-    ? {
-        name: business.name,
-        image: business.image_url,
-        rating: business.rating,
-        categories: business.categories,
-        price: business.price,
-        city: business.location.city,
-        origin: location,
-        destination: `${business.coordinates.latitude}, ${business.coordinates.longitude}`,
-        distance: business.distance,
-        closing: getClosingTimeToday(business)
-      }
-    : null;
 
   return (
     <>
       <div className="">
-        {business ? (
+        {currBusiness ? (
           <p>{businesses.length} cards left</p>
         ) : (
           <p>&nbsp;</p>
         )}
       </div>
       <div className="w-full flex flex-col grow justify-center gap-4">
-        {business ? (
+        {currBusiness ? (
           <>
-            <BusinessCard {...businessCardProps} />
+            {/* Card */}
+            <BusinessCard business={currBusiness} location={location} />
+            {/* Buttons */}
             <div className="flex w-full gap-4">
               <Button type="secondary" text="No" icon={noIcon} onClick={handleNoClick} />
-              <Button type="primary" text="Yes" icon={yesIcon} onClick={() => handleYesClick(business.url)} />
+              <Button type="primary" text="Yes" icon={yesIcon} onClick={() => handleYesClick(currBusiness.url)} />
             </div>
           </>
         ) : (

@@ -1,13 +1,24 @@
-import React from 'react';
+'use client';
+
 import { motion } from "framer-motion";
 
 import Pill from '@/components/ui/Pill';
 import StarRating from '@/components/ui/StarRating';
 import Transportation from '@/components/ui/Transportation';
+import getClosingTimeToday from "@/utils/getClosingTimeToday";
 
 
-
-const BusinessCard = ({ name, image, rating, price, categories, city, origin, destination, closing }) => {
+const BusinessCard = ({ business, location }) => {
+    const name = business?.name || 'Loading...';
+    const image = business?.image_url || '';
+    const rating = business?.rating || 0;
+    const categories = business?.categories || [];
+    const price = business?.price || '';
+    const city = business?.location?.city || 'Unknown';
+    const origin = location;
+    const destination = `${business?.coordinates?.latitude || 0}, ${business?.coordinates?.longitude || 0}`;
+    const closing = getClosingTimeToday(business);
+    
     const css = {
         background: `
           linear-gradient(8deg, rgba(0, 0, 0, 0.00) 70%, rgba(0, 0, 0, 0.6) 90%, rgba(0, 0, 0, 0.75) 100%),

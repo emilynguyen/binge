@@ -6,7 +6,7 @@ export async function GET(req) {
 
 
   if (!origin || !destination) {
-    return new Response(JSON.stringify({ error: 'Invalid parameters' }), { status: 400 });
+    return new Response(JSON.stringify({ error: 'N/A' }), { status: 400 });
   }
 
   const fetchDistanceMatrix = async (mode) => {
@@ -15,7 +15,7 @@ export async function GET(req) {
     );
     const data = await response.json();
     if (data.rows[0].elements[0].status === 'ZERO_RESULTS') {
-      return 'N/A';
+      return '...';
     }
 
     // Replace mins with min
