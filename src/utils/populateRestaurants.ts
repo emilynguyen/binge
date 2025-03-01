@@ -1,9 +1,11 @@
 import axios from 'axios';
 import shuffleArray from "@/utils/shuffleArray";
+import { writeData } from "@/utils/firebaseUtils";
+
 
 
 async function populateRestaurants(location) {
-  let db = [];
+  let restaurants = [];
 
   // Fetch restaurants
   async function fetchBusinesses(location, offset) {
@@ -28,14 +30,20 @@ async function populateRestaurants(location) {
         fetchBusinesses(location, 150),
       ]);
       // Add all 4 results to one db
-      db = businesses1.concat(businesses2).concat(businesses3).concat(businesses4);
+      restaurants = businesses1.concat(businesses2).concat(businesses3).concat(businesses4);
       // Add additional properties
-      db.forEach(business => {
+      restaurants.forEach(business => {
         business.eliminated = false;
       });
       // Shuffle
-      db = shuffleArray(db);
-      return db;
+      restaurants = shuffleArray(restaurants);
+
+      // Firebase
+      // ex: writeData(`users/${userId}/profile`, { name: "John Doe", age: 30 });
+      // Test party id = pho
+      writeData("pho", { restaurants });
+
+      return restaurants;
     } catch (error) {
         console.error('Error fetching businesses:', error);
       return [];
