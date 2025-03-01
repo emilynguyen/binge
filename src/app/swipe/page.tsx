@@ -75,7 +75,7 @@ const Swipe = () => {
           <p>&nbsp;</p>
         )}
       </div>
-      <div className="w-full h-auto flex flex-col justify-center gap-4">
+      <div className="w-full flex flex-col grow justify-center gap-4">
         {business ? (
           <>
             <BusinessCard {...businessCardProps} />
@@ -85,9 +85,9 @@ const Swipe = () => {
             </div>
           </>
         ) : (
-          <h3 className="mt-[-8rem] mb-6">Loading...</h3>
+          <div className="mt-[-4rem] mb-6">Loading...</div>
         )}
-        {error && <div>{error}</div>}
+        {error && <p>{error}</p>}
       </div>
     </>
   );

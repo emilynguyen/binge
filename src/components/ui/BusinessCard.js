@@ -18,7 +18,7 @@ const BusinessCard = ({ name, image, rating, price, categories, city, origin, de
 
   return (
     <motion.div initial={{ opacity: 0, y: 0 }} 
-    animate={{ opacity: 1, y: 0 }} className="min-h-[460px] w-full pr-4 pl-4 pt-4 pb-4 rounded-2xl flex grow flex-col justify-between" style={css}>
+    animate={{ opacity: 1, y: 0 }} className="min-h-[460px] max-h-[640px] w-full h-full pr-4 pl-4 pt-4 pb-4 rounded-2xl flex flex-col grow justify-between" style={css}>
         {/* Top */}
         <div className="">
             <div className="ml-auto flex flex-wrap justify-end gap-2 w-[75%]">

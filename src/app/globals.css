@@ -37,12 +37,15 @@ body {
   text-underline-offset: 24%;
 }
 
+
 main {
-  flex: 1 0;
+ /* flex: 1; */
 }
 footer {
-  flex: 0 0;
+  /*flex: 0; */
+  margin-top: auto;
 }
+  
 
 button {
   height: 4.5rem;
