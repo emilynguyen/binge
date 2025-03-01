@@ -13,7 +13,6 @@ export async function GET(request) {
   const offset = searchParams.get('offset');
 
 
-
   if (!location) {
     return NextResponse.json({ message: 'Location parameter is required' }, { status: 400 });
   }

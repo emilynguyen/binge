@@ -34,11 +34,11 @@ function Home() {
             // Set address as input value
             setLocationInput(data.address);
             setcurrLocationLoaded(true);
+            console.log("Find location success: " + data.address);
           } catch (error) {
             setError(error.message);
           } finally {
             setLoadingCurrLocation(false);
-            setLocationInput("");
           }
         },
         (error) => {

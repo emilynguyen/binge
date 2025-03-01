@@ -1,6 +1,3 @@
-
-
-
 const getCurrentLocation = (): Promise<{ latitude: number; longitude: number }> => {
     return new Promise((resolve, reject) => {
       if ('geolocation' in navigator) {
