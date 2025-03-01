@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import reverseGeocode from "@/utils/reverseGeocode";
+//import reverseGeocode from "@/utils/reverseGeocode";
+
 
 
 function Home() {
@@ -16,18 +17,22 @@ function Home() {
    * On focus of location input, get user's location
    */
    const handleOnFocus = async () => {
-    // Only retrive current location once
+    // Only retrive current location once so user can overwrite
     if (currLocationLoaded) return;
     
     setLoadingCurrLocation(true);
     setLocationInput('Loading location...');
 
     if (navigator.geolocation) {
+      // Get current location
       navigator.geolocation.getCurrentPosition(
         async (position) => {
+          // Reverse geocode to get address
           try {
-            const address = await reverseGeocode(position.coords.latitude, position.coords.longitude);
-            setLocationInput(address);
+            const response = await fetch(`/api/reverse-geocode?lat=${position.coords.latitude}&lng=${position.coords.longitude}`);
+            const data = await response.json();
+            // Set address as input value
+            setLocationInput(data.address);
             setcurrLocationLoaded(true);
           } catch (error) {
             setError(error.message);

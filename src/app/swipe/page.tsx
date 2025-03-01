@@ -68,7 +68,7 @@ const Swipe = () => {
 
   return (
     <>
-      <div className="mb2">
+      <div className="">
         {business ? (
           <p>{businesses.length} cards left</p>
         ) : (

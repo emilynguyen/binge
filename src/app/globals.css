@@ -70,9 +70,11 @@ button.icon {
   padding: 0;
 }
 
-button:hover {
-  opacity: 1;
-  border-radius: .5rem;
+@media (hover: hover) {
+  button:hover {
+    opacity: 1;
+    border-radius: .5rem;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {

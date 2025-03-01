@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${instrumentSerif.className} ${dmMono.className} antialiased flex flex-col justify-betwen min-h-screen p-6`}
+        className={`${instrumentSerif.className} ${dmMono.className} antialiased flex flex-col justify-betwen min-h-full p-6`}
       >
         <main className="flex justify-center items-center flex-col min-h-full grow pt-8 pb-12 text-center">
         <div className="w-full grow max-w-md flex flex-col justify-center items-center gap-10">
