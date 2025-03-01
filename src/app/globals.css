@@ -111,12 +111,21 @@ input {
   background-color: transparent;
   text-align: center;
   text-overflow: ellipsis;
+  transition: all 5000s;
 }
 
 input:focus {
   outline: none;
   border-color: var(--cream);
 }
+
+/*
+input:autofill, input:-webkit-autofill::first-line {
+  font-size: 20px;
+  background-color: var(--cream-10) !important;
+}
+  */
+
 
 input[readOnly] {
   cursor: default;

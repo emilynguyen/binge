@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'
+
+
 import axios from 'axios';
 
 import getClosingTimeToday from "@/utils/getClosingTimeToday";
@@ -13,8 +16,11 @@ const yesIcon = "/icons/smiley_40x40.svg";
 const Swipe = () => {
   const [businesses, setBusinesses] = useState([]);
   //const [card, setCard] = useState({});
+  const [message, setMessage] = useState('...');
+  const [error, setError] = useState(false);
   const [location, setLocation] = useState('');
-  const [error, setError] = useState('');
+  const router = useRouter()
+
 
   const fetchBusinesses = async (location) => {
     try {
@@ -23,7 +29,8 @@ const Swipe = () => {
       });
       setBusinesses(response.data.businesses);
     } catch (err) {
-      setError('Failed to fetch businesses :(');
+      setMessage('Failed to fetch restaurants :(');
+      setError(true);
       console.error(err);
     }
   };
@@ -39,14 +46,22 @@ const Swipe = () => {
   }, []);
 
 
+  /*
+   * Click handler for no button / left swipe
+   */
   const handleNoClick = () => {
     const randomIndex = Math.floor(Math.random() * businesses.length);
     setBusinesses([...businesses.slice(0, randomIndex), ...businesses.slice(randomIndex + 1)]);
   };
 
+  /*
+   * Click handler for yes button / right swipe
+   */
   const handleYesClick = (link) => {
+    // Temp
     window.open(link, '_blank');
   };
+
 
   const randomIndex = businesses.length ? Math.floor(Math.random() * businesses.length) : 0;
   const business = businesses[randomIndex];
@@ -85,9 +100,10 @@ const Swipe = () => {
             </div>
           </>
         ) : (
-          <div className="mt-[-4rem] mb-6">Loading...</div>
+          
+          <h2 className="mt-[-4rem] mb-6">{message}</h2>
         )}
-        {error && <p>{error}</p>}
+        {error && <Button text="Try again" type="secondary" onClick={() => router.push('/')}/>}
       </div>
     </>
   );

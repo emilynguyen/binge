@@ -38,17 +38,21 @@ function Home() {
             setError(error.message);
           } finally {
             setLoadingCurrLocation(false);
+            setLocationInput("");
           }
         },
         (error) => {
           setError(error.message);
           setLoadingCurrLocation(false);
+          setLocationInput("");
         }
       );
     } else {
       setError('Geolocation not supported');
       setLoadingCurrLocation(false);
+      setLocationInput("");
     }
+    setcurrLocationLoaded(true);
   };
 
   /*
@@ -56,6 +60,7 @@ function Home() {
    */
   const handleInputChange = (e) => {
     setLocationInput(e.target.value);
+    setError("");
   };
 
   /*
@@ -69,7 +74,8 @@ function Home() {
   };
 
   if (error) {
-    return <div>Error: {error}</div>;
+    //return <div>Error: {error}</div>;
+    
   }
 
   return (
@@ -87,7 +93,7 @@ function Home() {
         />
         <button className="primary" type="submit" disabled={loadingCurrLocation}>Start</button>
       </form>
-      {error && <div>{error}</div>}
+      <p className="mt-6 h-[1rem]">{error && error}</p>
     </div>
   );
 }
