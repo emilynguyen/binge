@@ -2,6 +2,11 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Form from 'next/form'
+import CleanupExpiredItems from '@/components/CleanupExpiredItems';
+
+
+
 //import reverseGeocode from "@/utils/reverseGeocode";
 
 
@@ -34,7 +39,6 @@ function Home() {
             // Set address as input value
             setLocationInput(data.address);
             setcurrLocationLoaded(true);
-            console.log("Find location success: " + data.address);
           } catch (error) {
             setError(error.message);
           } finally {
@@ -68,10 +72,16 @@ function Home() {
    */
   const handleSubmit = (e) => {
     e.preventDefault();
+    // createParty or partyOfOne
+    //const submitter = e.nativeEvent.submitter.name;
+
+    
     if (router) {
       router.push(`/swipe?location=${encodeURIComponent(locationInput)}`);
     }
   };
+
+
 
   if (error) {
     //return <div>Error: {error}</div>;
@@ -80,7 +90,8 @@ function Home() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="w-full">
+      <CleanupExpiredItems />
+      <Form onSubmit={handleSubmit} className="w-full">
         <input
           name="location"
           value={locationInput}
@@ -91,10 +102,13 @@ function Home() {
           onChange={handleInputChange}
           required
         />
-        <button className="primary" type="submit" disabled={loadingCurrLocation}>Start</button>
-      </form>
+        <button className="primary mb-4" type="submit" name="createParty" disabled={loadingCurrLocation}>Create a party</button>
+        <button className="secondary" type="submit" name="partyOfOne" disabled={loadingCurrLocation}>Dine alone</button>
+      </Form>
       <p className="mt-6 h-[1rem]">{error && error}</p>
+      
     </div>
+    
   );
 }
 

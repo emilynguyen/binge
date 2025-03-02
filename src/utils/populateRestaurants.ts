@@ -39,9 +39,8 @@ async function populateRestaurants(location) {
       restaurants = shuffleArray(restaurants);
 
       // Firebase
-      // ex: writeData(`users/${userId}/profile`, { name: "John Doe", age: 30 });
       // Test party id = pho
-      writeData("pho", { restaurants });
+      await writeData("pho", { restaurants });
 
       return restaurants;
     } catch (error) {
