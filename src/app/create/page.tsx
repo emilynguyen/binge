@@ -1,12 +1,9 @@
 "use client";
 
-//import Button from "@/components/ui/Button";
-//import Input from "@/components/ui/Input";
-import axios from 'axios';
+import Button from "@/components/ui/Button";
 import Header from "@/components/layout/Header";
 import createParty from "@/utils/createParty";
 import Image from "next/image";
-import Form from "next/form";
 import { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
 
@@ -24,13 +21,10 @@ export default function Create() {
   useEffect(() => {
     const createData = async () => {
       try {
-        // Create party
+        // Create party (createParty also creates first member)
         const generatedPartyID = await createParty();
         setPartyID(generatedPartyID);
 
-        // Create first party member
-        const response = await axios.post('/api/create-member', { partyID: generatedPartyID });
-        console.log(`Member added to ${generatedPartyID} with session ID: ${response.data.sessionID}`);
       } catch (err) {
         console.log(err);
       }
@@ -40,23 +34,20 @@ export default function Create() {
 
   // End party if user hits back
   const endParty = () => {
-    router.push("/");
-    /*
-    const handleClick = async () => {
-      // Perform your function logic here
-      // await someAsyncFunction();
-  
-      // Redirect to a new page after the function completes
-      router.push('/');
-    };*/
+    // delete-party
+   // router.push("/");
+   
   };
 
  
-  function copyCode() {
-    navigator.clipboard.writeText(code);
+  function handleCopyCode(partyID) {
+    navigator.clipboard.writeText(partyID);
     setCopyIcon(currentCopyIcon === copyIcon ? copySuccessIcon : copyIcon);
   }
 
+  function handleContinue() {
+    router.push(`/join?party=${partyID}`);
+  }
 
   return (
     <>
@@ -73,7 +64,7 @@ export default function Create() {
           type="text"
           readOnly
         />
-        <button className="icon absolute right-4" onClick={copyCode}>
+        <button className="icon absolute right-4" onClick={() => handleCopyCode(partyID)}>
           <Image
             src={currentCopyIcon}
             width="40"
@@ -82,11 +73,7 @@ export default function Create() {
           />
         </button>
       </div>
-      <Form action="/waiting" className="w-full">
-        <button className="primary" type="submit">
-          Continue
-        </button>
-      </Form>
+      <Button text="Continue" type="primary" onClick={handleContinue}/>
       <a className="cursor-pointer" onClick={endParty}>
         Never mind
       </a>

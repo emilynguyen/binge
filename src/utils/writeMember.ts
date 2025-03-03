@@ -11,16 +11,21 @@ export function generateSessionId() {
 /*
  * Creates a new party member and returns their sessionID
  */
-export async function createMember(partyID) {
+export async function writeMember(partyID) {
   const sessionID = generateSessionId();
 
   try {
-    // Write to db
-    await writeData(`${partyID}/members`, { 'id': sessionID });
+    // Get existing members 
+    const party = await readData(`/${partyID}`);
+    const existingMembers = party.members || [];
+    // Add new member 
+    const newMember = { id: sessionID };
+    const updatedMembers = [...existingMembers, newMember];
+    await writeData(`${partyID}/members`, updatedMembers);
 
     // Read the data again after writing
-    const updatedDb = await readData("/");
-    console.log(updatedDb);
+    //const updatedDb = await readData("/");
+    //console.log(updatedDb);
 
     return sessionID;
   } catch (err) {
@@ -29,4 +34,4 @@ export async function createMember(partyID) {
   }
 }
 
-export default createMember;
+export default writeMember;

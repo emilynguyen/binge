@@ -1,6 +1,6 @@
 import { writeData, readData } from "@/utils/firebaseUtils";
 import generatePartyID from "@/utils/generatePartyID";
-import createMember from "@/utils/createMember";
+import axios from 'axios';
 
 
 async function createParty() {
@@ -15,13 +15,17 @@ async function createParty() {
             // Use partyID if it isn't already in use or if db is empty
             if (!db || !db[partyID]) {
                 // Add party to db
-                await writeData(partyID, { 'timestamp' : Date.now(), 'isClosed' : false});
+                await writeData(partyID, { 
+                    'timestamp' : Date.now(), 
+                    'isClosed' : false, 
+                    'isStarted' : false,
+                    'members' : []
+                });
                 console.log("Added new party: " + partyID);
+                
                 // Add creator as first member
-                createMember(partyID);
-                // Read the data again after writing
-                const updatedDb = await readData("/");
-                console.log(updatedDb);
+                await axios.post('/api/create-member', { partyID: partyID });
+               
                 uniqueID = true;
                 return partyID;
             } else {

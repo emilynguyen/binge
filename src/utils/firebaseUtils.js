@@ -1,4 +1,4 @@
-import { ref, set, get, child } from "firebase/database";
+import { ref, set, get, child, onValue, off } from "firebase/database";
 import { database } from "@/lib/firebase";
 
 export const writeData = async (path, data) => {
@@ -33,4 +33,18 @@ export const removeData = async (path) => {
   } catch (error) {
     console.error("Error removing data: ", error);
   }
+};
+
+export const getMembersRef = (partyID) => {
+  return ref(database, `/${partyID}/members`);
+};
+
+export const listenToMembers = (partyID, callback) => {
+  const membersRef = getMembersRef(partyID);
+  const unsubscribe = onValue(membersRef, (snapshot) => {
+    const membersData = snapshot.val();
+    callback(membersData || {});
+  });
+
+  return () => off(membersRef, 'value', unsubscribe);
 };

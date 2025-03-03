@@ -1,27 +1,27 @@
 'use client'
 
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Form from 'next/form'
 import CleanupExpiredItems from '@/components/CleanupExpiredItems';
-
-
-
-//import reverseGeocode from "@/utils/reverseGeocode";
+import { readData } from '@/utils/firebaseUtils';
 
 
 
 function Home() {
-  const [error, setError] = useState(null);
+  const [locationError, setLocationError] = useState(null);
+  const [joinError, setJoinError] = useState(null);
   const [locationInput, setLocationInput] = useState('');
   const [loadingCurrLocation, setLoadingCurrLocation] = useState(false);
   const [currLocationLoaded, setcurrLocationLoaded] = useState(false);
+ // const [partyIDInput, setPartyIDInput] = useState('');
   const router = useRouter();
 
    /*
    * On focus of location input, get user's location
    */
-   const handleOnFocus = async () => {
+   const handleLocationOnFocus = async () => {
     // Only retrive current location once so user can overwrite
     if (currLocationLoaded) return;
     
@@ -40,19 +40,19 @@ function Home() {
             setLocationInput(data.address);
             setcurrLocationLoaded(true);
           } catch (error) {
-            setError(error.message);
+            setLocationError(error.message);
           } finally {
             setLoadingCurrLocation(false);
           }
         },
         (error) => {
-          setError(error.message);
+          setLocationError(error.message);
           setLoadingCurrLocation(false);
           setLocationInput("");
         }
       );
     } else {
-      setError('Geolocation not supported');
+      setLocationError('Geolocation not supported');
       setLoadingCurrLocation(false);
       setLocationInput("");
     }
@@ -62,51 +62,84 @@ function Home() {
   /*
    * On change of location input, update the state
    */
-  const handleInputChange = (e) => {
+  const handleLocationInputChange = (e) => {
     setLocationInput(e.target.value);
-    setError("");
+    setLocationError("");
   };
 
   /*
-   * On submit, go to /swipe
+   * On submit, go to /create
    */
-  const handleSubmit = (e) => {
+  const handleCreate = (e) => {
     e.preventDefault();
     // createParty or partyOfOne
     //const submitter = e.nativeEvent.submitter.name;
 
-    
     if (router) {
       router.push(`/swipe?location=${encodeURIComponent(locationInput)}`);
     }
   };
 
-
-
-  if (error) {
-    //return <div>Error: {error}</div>;
+    /*
+   * Handle joining a party
+   */
+    async function handleJoin(e) {
+      e.preventDefault();
+      const partyID = e.target.partyID.value;
+      
+      setJoinError(null);
+  
+      try {
     
-  }
+        const party = await readData(`/${partyID}`);
+        if (!party) {
+          setJoinError('Party not found');
+          return;
+        }
+        if (router) {
+          // Create member
+          await axios.post('/api/create-member', { partyID: partyID });
+
+          // Go to waiting room
+          router.push(`/join?party=${partyID}`);
+        }
+ 
+      } catch {
+        setJoinError('Error joining: please try again');
+      } 
+    };
+
 
   return (
     <div>
       <CleanupExpiredItems />
-      <Form onSubmit={handleSubmit} className="w-full">
+      <Form onSubmit={handleCreate} className="w-full">
         <input
           name="location"
           value={locationInput}
           className="mb-4"
           placeholder="Your location"
           type="text"
-          onFocus={handleOnFocus}
-          onChange={handleInputChange}
+          onFocus={handleLocationOnFocus}
+          onChange={handleLocationInputChange}
           required
         />
         <button className="primary mb-4" type="submit" name="createParty" disabled={loadingCurrLocation}>Create a party</button>
         <button className="secondary" type="submit" name="partyOfOne" disabled={loadingCurrLocation}>Dine alone</button>
       </Form>
-      <p className="mt-6 h-[1rem]">{error && error}</p>
-      
+      <p className="mt-6 h-[1rem]">{locationError && locationError}</p>
+      <h3 className="italic mb-10">or</h3>
+      <Form onSubmit={handleJoin} className="w-full">
+        <input
+          name="partyID"
+          className="mb-4"
+          placeholder="Party code"
+          type="text"
+          required
+        />
+        <button className="primary mb-4" type="submit" name="createParty">Join a party</button>
+      </Form>
+      <p className="mt-6 h-[1rem]">{joinError && joinError}</p>
     </div>
     
   );

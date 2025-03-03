@@ -1,8 +1,10 @@
 import { cookies } from 'next/headers';
-import createMember from '@/utils/createMember';
+import writeMember from '@/utils/writeMember';
 
 export async function POST(req) {
   const { partyID } = await req.json();
+
+  console.log('Creating new member...');
 
   if (!partyID) {
     return new Response(JSON.stringify({ message: 'Party ID is required' }), {
@@ -13,20 +15,33 @@ export async function POST(req) {
 
   try {
     // Create member and get sessionID
-    const sessionID = await createMember(partyID);
+    const sessionID = await writeMember(partyID);
 
     // Set cookie
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     // Expires 1 hour from now
-    const expires = new Date(Date.now() + 60 * 60 * 1000); 
+    const expires = new Date(Date.now() + 60 * 60 * 1000);
 
-    await cookieStore.set('sessionID', sessionID, {
+    // Store sessionID
+    cookieStore.set('sessionID', sessionID, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'Strict',
       path: '/',
-      expires
+      expires,
     });
+
+    // Store partyID
+    cookieStore.set('partyID', partyID, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      path: '/',
+      expires,
+    });
+
+    console.log('Cookies set for new member');
+
 
     return new Response(JSON.stringify({ sessionID }), {
       status: 200,
@@ -41,7 +56,7 @@ export async function POST(req) {
   }
 }
 
-export async function handleRequest(req) {
+export async function handler(req) {
   if (req.method === 'POST') {
     return POST(req);
   }
@@ -50,9 +65,4 @@ export async function handleRequest(req) {
     status: 405,
     headers: { 'Content-Type': 'application/json' },
   });
-}
-
-export default async function handler(req, res) {
-  const response = await handleRequest(req);
-  res.status(response.status).json(await response.json());
 }

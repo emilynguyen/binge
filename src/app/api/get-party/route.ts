@@ -1,14 +1,25 @@
-// app/api/get-party/route.ts
+import { readData } from '@/utils/firebaseUtils';
 
-// import { neon } from "@neondatabase/serverless";
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const partyID = searchParams.get('partyID');
 
+  console.log('Getting party ' + partyID);
 
-// const sql = neon(process.env.DATABASE_URL);
+  if (!partyID) {
+    return new Response(JSON.stringify({ error: 'Party ID is required' }), { status: 400 });
+  }
 
-
-export async function GET() {
-  /*
-  const data = await sql`SELECT CODE FROM parties`;
-  return NextResponse.json({ data }); */
-} 
-
+  try {
+    const party = await readData(`/${partyID}`);
+    
+    if (party) {
+      console.log('Party found!');
+      return new Response(JSON.stringify({ partyID, party }), { status: 200 });
+    } else {
+      return new Response(JSON.stringify({ error: 'Party not found' }), { status: 404 });
+    }
+  } catch {
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
+  }
+}
