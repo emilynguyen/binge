@@ -19,10 +19,14 @@ export default function Create() {
 
 
   useEffect(() => {
+    // Retrieve location parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const location = urlParams.get('location');
+
     const createData = async () => {
       try {
         // Create party (createParty also creates first member)
-        const generatedPartyID = await createParty();
+        const generatedPartyID = await createParty(location);
         setPartyID(generatedPartyID);
 
       } catch (err) {

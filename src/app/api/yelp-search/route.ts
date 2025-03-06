@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 
+/**
+ * API call to Yelp Fusion
+ * @param request 
+ * @returns search response
+ */
 export async function GET(request) {
   const API_KEY = process.env.YELP_API_KEY;
 
@@ -11,7 +16,6 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const location = searchParams.get('location');
   const offset = searchParams.get('offset');
-
 
   if (!location) {
     return NextResponse.json({ message: 'Location parameter is required' }, { status: 400 });

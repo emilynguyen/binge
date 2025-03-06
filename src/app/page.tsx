@@ -76,7 +76,7 @@ function Home() {
     //const submitter = e.nativeEvent.submitter.name;
 
     if (router) {
-      router.push(`/swipe?location=${encodeURIComponent(locationInput)}`);
+      router.push(`/create?location=${encodeURIComponent(locationInput)}`);
     }
   };
 
@@ -125,10 +125,10 @@ function Home() {
           required
         />
         <button className="primary mb-4" type="submit" name="createParty" disabled={loadingCurrLocation}>Create a party</button>
-        <button className="secondary" type="submit" name="partyOfOne" disabled={loadingCurrLocation}>Dine alone</button>
+        <button className="secondary hidden" type="submit" name="partyOfOne" disabled={loadingCurrLocation}>Dine alone</button>
       </Form>
       <p className="mt-6 h-[1rem]">{locationError && locationError}</p>
-      <h3 className="italic mb-10">or</h3>
+      <h3 className="italic mb-14">or</h3>
       <Form onSubmit={handleJoin} className="w-full">
         <input
           name="partyID"
@@ -137,7 +137,7 @@ function Home() {
           type="text"
           required
         />
-        <button className="primary mb-4" type="submit" name="createParty">Join a party</button>
+        <button className="secondary mb-4" type="submit" name="createParty">Join a party</button>
       </Form>
       <p className="mt-6 h-[1rem]">{joinError && joinError}</p>
     </div>

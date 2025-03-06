@@ -1,44 +1,42 @@
 import { writeData, readData } from "@/utils/firebaseUtils";
-import generatePartyID from "@/utils/generatePartyID";
+import generateUniquePartyID from "@/utils/generatePartyID";
+import getBusinessesFromYelp from "@/utils/getBusinessesFromYelp";
+
 import axios from 'axios';
 
-
-async function createParty() {
+/**
+ * Create a new party, add its first member, and populate businesses
+ * @param location 
+ * @returns partyID of new party
+ */
+async function createParty(location) {
+    console.log('Creating new party in location: ' + location);
     try {
         const db = await readData("/");
-        let uniqueID = false;
+        
+        // Generate unique party ID
+        const partyID = await generateUniquePartyID();
 
-        while (!uniqueID) {
-            // Generate unique party ID
-            const partyID = generatePartyID();
-
-            // Use partyID if it isn't already in use or if db is empty
-            if (!db || !db[partyID]) {
-                // Add party to db
-                await writeData(partyID, { 
-                    'timestamp' : Date.now(), 
-                    'isClosed' : false, 
-                    'isStarted' : false,
-                    'members' : []
-                });
-                console.log("Added new party: " + partyID);
-                
-                // Add creator as first member
-                await axios.post('/api/create-member', { partyID: partyID });
-               
-                uniqueID = true;
-                return partyID;
-            } else {
-                //console.log("Party ID already in use: " + partyID);
-            }
-        }
+        // Add party to db
+        await writeData(partyID, { 
+            'timestamp' : Date.now(), 
+            'location' : location,
+            'isClosed' : false, 
+            'isStarted' : false,
+            'members' : [],
+            'businesses' : await getBusinessesFromYelp(location)
+        });
+        console.log("Created new party: " + partyID);
+        
+        // Add party creator as first member
+        await axios.post('/api/create-member', { partyID: partyID });
+        
+        return partyID;
+ 
     } catch (err) {
-        console.log("Error reading or writing data: ", err);
+        console.log("Error creating party");
+        return null;
     }
-
-    // Populate DB
-    return null;
-  
 }
 
 export default createParty;

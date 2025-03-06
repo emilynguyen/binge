@@ -3,9 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'
 
-import populateRestaurants from "@/utils/populateRestaurants";
 import BusinessCard from '@/components/ui/BusinessCard';
 import Button from '@/components/ui/Button';
+import { readData } from '@/utils/firebaseUtils';
+import getBusinesses from '@/utils/getBusinesses';
+
+
+
 
 const noIcon = "/icons/x_40x40.svg";
 const yesIcon = "/icons/smiley_40x40.svg";
@@ -22,12 +26,13 @@ const Swipe = () => {
   useEffect(() => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const location = urlParams.get('location');
+      const partyID = urlParams.get('party');
 
-      if (location) {
-        setLocation(location);
         try {
-          const fetchedBusinesses = await populateRestaurants(location);
+          const location = await readData(`/${partyID}/location`);
+          setLocation(location);
+          // Update to get from db
+          const fetchedBusinesses = await getBusinesses(partyID);
           setBusinesses(fetchedBusinesses);
           setCurrBusiness(fetchedBusinesses[0]);
         } catch (err) {
@@ -35,7 +40,7 @@ const Swipe = () => {
           setMessage('Failed to fetch businesses');
           setError(true);
         }
-      }
+      
     };
 
     fetchData();

@@ -50,17 +50,24 @@ export default function Join() {
      router.push('/');
   }
 
+  function handleStart() {
+    console.log('STARTING NOW');
+    router.push(`/swipe?party=${partyID}`);
+  }
+
 
   return (
     <>
       <Header text={<i>Waiting for your whole party...</i>} />
       <div className="grow flex flex-col">
-         <span className="border rounded-[50%] mt-4 pr-6 pl-6 pt-[.2rem] pb-[.2rem] tracking-wider inline-block mb-auto">{partyID}</span>
+        <div>
+          <span className="border rounded-[50%] mt-4 pr-6 pl-6 pt-[.2rem] pb-[.2rem] tracking-wider inline-block mb-auto self-auto">{partyID}</span>
+         </div>
       
         <div className="w-full grow relative flex flex-col justify-center pt-20 mb-16">
             <div>
             <h1 className="mb-16">This is currently<br></br>a party of ({memberCount})</h1>
-            <Button text="Everyone is here" type="primary"/>
+            <Button text="Everyone is here" type="primary" onClick={handleStart}/>
             <a className="cursor-pointer mt-16 inline-block" onClick={handleLeaveParty}>Leave party</a>
             <p className="mt-6 h-[1rem]">{error && error}</p>
             </div>

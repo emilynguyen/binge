@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { setCookie } from '@/utils/cookieUtils';
 import writeMember from '@/utils/writeMember';
 
 export async function POST(req) {
@@ -14,31 +14,12 @@ export async function POST(req) {
   }
 
   try {
-    // Create member and get sessionID
+    // Create member and get their sessionID
     const sessionID = await writeMember(partyID);
 
-    // Set cookie
-    const cookieStore = await cookies();
-    // Expires 1 hour from now
-    const expires = new Date(Date.now() + 60 * 60 * 1000);
-
-    // Store sessionID
-    cookieStore.set('sessionID', sessionID, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
-      path: '/',
-      expires,
-    });
-
-    // Store partyID
-    cookieStore.set('partyID', partyID, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
-      path: '/',
-      expires,
-    });
+    // Set cookies
+    await setCookie('sessionID', sessionID);
+    await setCookie('partyID', partyID);
 
     console.log('Cookies set for new member');
 
@@ -54,15 +35,4 @@ export async function POST(req) {
       headers: { 'Content-Type': 'application/json' },
     });
   }
-}
-
-export async function handler(req) {
-  if (req.method === 'POST') {
-    return POST(req);
-  }
-
-  return new Response(JSON.stringify({ message: 'Method Not Allowed' }), {
-    status: 405,
-    headers: { 'Content-Type': 'application/json' },
-  });
 }

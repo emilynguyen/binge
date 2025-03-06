@@ -2,15 +2,34 @@ import { NextResponse } from 'next/server';
 import { readData } from '@/utils/firebaseUtils';
 
 
-async function handleJoin(req) {
+async function handleCreate(req) {
+  // Check /create for location
   const url = new URL(req.url);
-  const partyID = url.searchParams.get('party');
+  const location = url.searchParams.get('location');
 
-  if (!partyID) {
-    console.log('No party name in query');
+  // Redirect if no partyID
+  if (!location) {
+    console.log('No location passed to /create');
     return NextResponse.redirect(new URL('/', req.url));
   }
 
+  return NextResponse.next();
+}
+
+
+
+async function handleJoin(req) {
+  // Check /join for partyID
+  const url = new URL(req.url);
+  const partyID = url.searchParams.get('party');
+
+  // Redirect if no partyID
+  if (!partyID) {
+    console.log('No party name passed to /join');
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
+  // If partyID, check that user has the same partyID and partyID exists in db
   try {
     // Get party and user's sessionID
     const party = await readData(`/${partyID}`);
@@ -37,6 +56,21 @@ async function handleJoin(req) {
     console.log(err);
     return NextResponse.redirect(new URL('/', req.url));
   }
+}
+
+async function handleSwipe(req) {
+  // Check /swipe for partyID
+  const url = new URL(req.url);
+  const partyID = url.searchParams.get('party');
+  const partyExists = await readData('/${partyID}');
+
+  // Redirect if no partyID or if party not found
+  if (!partyID || !partyExists) {
+    console.log('Invalid partyID passed to /swipe');
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
+  return NextResponse.next();
 }
 
 // TODO does not check db yet
@@ -82,6 +116,14 @@ export async function middleware(req) {
 
   if (pathname.startsWith('/join')) {
     return handleJoin(req);
+  }
+
+  if (pathname.startsWith('/create')) {
+    return handleCreate(req);
+  }
+
+  if (pathname.startsWith('/swipe')) {
+    return handleSwipe(req);
   }
 
   

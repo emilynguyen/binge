@@ -1,12 +1,12 @@
-import { cookies } from 'next/headers';
+import { getCookie, deleteCookie } from '@/utils/cookieUtils';
+
 import deleteMember from '@/utils/deleteMember';
 
 export async function POST() {
-  console.log('Deleting member...');
-  const cookieStore = await cookies();
-  const sessionID = cookieStore.get('sessionID')?.value;
-  const partyID = cookieStore.get('partyID')?.value;
+  const sessionID = await getCookie('sessionID');
+  const partyID = await getCookie('partyID');
 
+ console.log('Deleting member ' + sessionID + "...");
 
   if (!partyID || !sessionID) {
     return new Response(JSON.stringify({ message: 'Party ID is required' }), {
@@ -20,8 +20,9 @@ export async function POST() {
     await deleteMember(partyID, sessionID);
 
     // Clear cookies
-    cookieStore.delete('sessionID');
-    cookieStore.delete('partyID');
+    await deleteCookie('sessionID');
+    await deleteCookie('partyID');
+
 
     return new Response(JSON.stringify({ message: 'Member deleted successfully' }), {
       status: 200,
