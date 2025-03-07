@@ -1,15 +1,16 @@
-import { getCookie, deleteCookie } from '@/utils/cookieUtils';
-
+import { getCookie, clearCookies } from '@/utils/cookieUtils';
 import deleteMember from '@/utils/deleteMember';
 
+// handle case where party is already gone from db
 export async function POST() {
+  console.log('Deleting member...');
   const sessionID = await getCookie('sessionID');
   const partyID = await getCookie('partyID');
 
  console.log('Deleting member ' + sessionID + "...");
 
   if (!partyID || !sessionID) {
-    return new Response(JSON.stringify({ message: 'Party ID is required' }), {
+    return new Response(JSON.stringify({ message: 'Party ID is required to delete member' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -20,8 +21,7 @@ export async function POST() {
     await deleteMember(partyID, sessionID);
 
     // Clear cookies
-    await deleteCookie('sessionID');
-    await deleteCookie('partyID');
+    await clearCookies();
 
 
     return new Response(JSON.stringify({ message: 'Member deleted successfully' }), {

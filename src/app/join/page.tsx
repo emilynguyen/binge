@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 import Header from "@/components/layout/Header";
 import { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
-import { listenToMembers } from '@/utils/firebaseUtils';
+import { listenToMembers, writeData } from '@/utils/firebaseUtils';
 
 
 export default function Join() {
@@ -42,16 +42,20 @@ export default function Join() {
       try {
         await axios.post('/api/delete-member', { partyID });
       } catch (err) {
-        console.log(err);
-        setError('Error: failed to leave party');
-
+        console.error(err);
+        setError('Failed to leave party, try again');
       }
      // Go back home
      router.push('/');
   }
 
-  function handleStart() {
-    console.log('STARTING NOW');
+  async function handleStart() {
+    try {
+      await writeData(`/${partyID}/isStarted`, true);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to start session, try again');
+    }
     router.push(`/swipe?party=${partyID}`);
   }
 

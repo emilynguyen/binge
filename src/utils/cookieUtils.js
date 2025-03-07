@@ -22,8 +22,16 @@ async function setCookie(name, val) {
 
   async function deleteCookie(name) {
     const cookieStore = await cookies();
-    cookieStore.delete('sessionID');
+    cookieStore.delete(name);
   }
 
-export { getCookie, setCookie, deleteCookie };
+  async function clearCookies() {
+    const cookieStore = await cookies();
+
+    cookieStore.getAll().forEach((cookie) => {
+        cookieStore.delete(cookie.name);
+    });
+  }
+
+export { getCookie, setCookie, deleteCookie, clearCookies };
 

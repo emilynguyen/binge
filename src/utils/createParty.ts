@@ -1,4 +1,4 @@
-import { writeData, readData } from "@/utils/firebaseUtils";
+import { writeData } from "@/utils/firebaseUtils";
 import generateUniquePartyID from "@/utils/generatePartyID";
 import getBusinessesFromYelp from "@/utils/getBusinessesFromYelp";
 
@@ -11,9 +11,7 @@ import axios from 'axios';
  */
 async function createParty(location) {
     console.log('Creating new party in location: ' + location);
-    try {
-        const db = await readData("/");
-        
+    try {        
         // Generate unique party ID
         const partyID = await generateUniquePartyID();
 
@@ -33,7 +31,7 @@ async function createParty(location) {
         
         return partyID;
  
-    } catch (err) {
+    } catch {
         console.log("Error creating party");
         return null;
     }
