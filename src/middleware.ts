@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { readData } from '@/utils/firebaseUtils';
-import { clearCookies } from '@/utils/cookieUtils';
+import { clearCookies, deleteCookie } from '@/utils/cookieUtils';
 
 
 
@@ -113,10 +113,12 @@ async function handleSwipe(req) {
     }
 
     const url = new URL(req.url);
-    const partyParam = url.searchParams.get('party');
+    const partyIDParam = url.searchParams.get('party');
+    const sessionIDParam = url.searchParams.get('member');
+
 
     // If cookie and params match, check that party exists
-    if (partyID == partyParam) {
+    if (partyID == partyIDParam && sessionID == sessionIDParam) {
       try {
         const partyExists = await isParty(partyID);
             
@@ -138,6 +140,7 @@ async function handleSwipe(req) {
     // If cookie and params do not match, redirect to correct url
     const redirectUrl = new URL('/swipe', req.url);
     redirectUrl.searchParams.set('party', partyID);
+    redirectUrl.searchParams.set('member', sessionID);
     return NextResponse.redirect(redirectUrl);
 }
 
@@ -223,11 +226,15 @@ export async function middleware(req) {
 
 
   // Redirect if cookies
-  // not redirecting join to swipe
-  // this is not redirecting on swipe or join
-  // true true false
   if (sessionID && partyID) {
     try {
+      // TODO Delete cookies if party expired or ended
+      const partyRef = await readData(`/${partyID}`);
+      if (!partyRef) {
+        clearCookies();
+        return NextResponse.redirect(new URL('/', req.url));
+      }
+
       const isStarted = await isPartyStarted(partyID);
 
       // Handle /join and /swipe
@@ -257,21 +264,13 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-
-  if (pathname.startsWith('/join')) {
-    return handleJoin(req);
-  }
-
   if (pathname.startsWith('/create')) {
     return handleCreate(req);
   }
 
-  if (pathname.startsWith('/swipe')) {
-    return handleSwipe(req);
-  }
+  return NextResponse.redirect(new URL('/', req.url));
 
   
-  return NextResponse.next();
   // Default to generic handler for all other routes
   //return handleGeneric(req);
 }

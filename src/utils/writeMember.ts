@@ -1,6 +1,6 @@
 import { writeData, readData } from "@/utils/firebaseUtils";
 import { v4 as uuidv4 } from 'uuid';
-import { initializeMatches } from "@/utils/matchUtils";
+import { initializeMemberMatches } from "@/utils/matchUtils";
 
 
 /**
@@ -40,7 +40,7 @@ export async function writeMember(partyID) {
       business.matches = { ...business.matches, [sessionID]: false };
     } */
 
-    await initializeMatches(partyID, sessionID);
+    await initializeMemberMatches(partyID, sessionID);
   
 
     // Read the data again after writing

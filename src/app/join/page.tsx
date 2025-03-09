@@ -17,8 +17,8 @@ export default function Join() {
     
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const partyID = urlParams.get('party');
-    setPartyID(partyID);
+    const partyIDParam = urlParams.get('party');
+    setPartyID(partyIDParam);
 
     const updateMemberCount = (membersData) => {
       if (membersData) {
@@ -28,14 +28,14 @@ export default function Join() {
       }
     };
 
-    const unsubscribe = listenToMembers(partyID, updateMemberCount);
+    const unsubscribe = listenToMembers(partyIDParam, updateMemberCount);
 
     // Cleanup listener on component unmount
     return () => {
       unsubscribe();
     };
-
-  }, [partyID]);
+    // removed partyID?
+  }, []);
 
 
   async function handleLeaveParty() {
@@ -49,6 +49,7 @@ export default function Join() {
      router.push('/');
   }
 
+  // TODO watch for isStarted and automatically redirect everyone in party when it's true
   async function handleStart() {
     try {
       await writeData(`/${partyID}/isStarted`, true);
@@ -71,9 +72,9 @@ export default function Join() {
         <div className="w-full grow relative flex flex-col justify-center pt-20 mb-16">
             <div>
             <h1 className="mb-16">This is currently<br></br>a party of ({memberCount})</h1>
-            <Button text="Everyone is here" type="primary" onClick={handleStart}/>
+            <Button className="primary" text="Everyone is here"  onClick={handleStart}/>
             <a className="cursor-pointer mt-16 inline-block" onClick={handleLeaveParty}>Leave party</a>
-            <p className="mt-6 h-[1rem]">{error && error}</p>
+            <p className="mt-6 h-[1rem] error">{error && error}</p>
             </div>
         </div>
       </div>

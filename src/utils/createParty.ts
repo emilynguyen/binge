@@ -19,9 +19,10 @@ async function createParty(location) {
         await writeData(partyID, { 
             'timestamp' : Date.now(), 
             'location' : location,
-            'isClosed' : false, 
             'isStarted' : false,
             'members' : [],
+            'eliminationCount' : 0,
+            'businessMatch': null,
             'businesses' : await getBusinessesFromYelp(location)
         });
         console.log("Created new party: " + partyID);

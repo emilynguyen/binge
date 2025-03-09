@@ -1,5 +1,4 @@
 import axios from 'axios';
-import shuffleArray from "@/utils/shuffleArray";
 
 /**
  * Retrieve 200 businesses in the given location using Yelp Fusion
@@ -32,13 +31,12 @@ async function getBusinessesFromYelp(location) {
       fetchBusinesses(location, 150),
     ]);
     // Add all 4 results to one db
-    restaurants = businesses1.concat(businesses2).concat(businesses3).concat(businesses4);
+   // restaurants = businesses1.concat(businesses2).concat(businesses3).concat(businesses4);
+   restaurants = businesses1;
     // Add additional properties
     restaurants.forEach(business => {
       business.eliminated = false;
     });
-    // Shuffle
-    restaurants = shuffleArray(restaurants);
 
     return restaurants;
   } catch (error) {

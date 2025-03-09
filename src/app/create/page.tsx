@@ -6,7 +6,7 @@ import createParty from "@/utils/createParty";
 import Image from "next/image";
 import { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
-
+import axios from 'axios';
 
 const copyIcon = "/icons/copy_40x40.svg";
 const copySuccessIcon = "/icons/copy_success_40x40.svg";
@@ -36,12 +36,18 @@ export default function Create() {
     createData();
   }, []);
 
-  // End party if user hits back
-  const endParty = () => {
-    // delete-party
-   // router.push("/");
-   
-  };
+
+
+  async function handleNeverMind() {
+    try {
+      await axios.post('/api/delete-member', { partyID });
+    } catch (err) {
+      console.error(err);
+      setError('Failed to leave party, try again');
+    }
+   // Go back home
+   router.push('/');
+  }
 
  
   function handleCopyCode(partyID) {
@@ -77,8 +83,8 @@ export default function Create() {
           />
         </button>
       </div>
-      <Button text="Continue" type="primary" onClick={handleContinue}/>
-      <a className="cursor-pointer" onClick={endParty}>
+      <Button text="Continue" className="primary" onClick={handleContinue}/>
+      <a className="cursor-pointer" onClick={handleNeverMind}>
         Never mind
       </a>
     </>

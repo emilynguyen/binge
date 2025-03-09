@@ -1,5 +1,28 @@
 import { getCookie, clearCookies } from '@/utils/cookieUtils';
-import deleteMember from '@/utils/deleteMember';
+import { readData, writeData } from '@/utils/firebaseUtils';
+import { deleteMemberMatches } from '@/utils/matchUtils';
+
+
+async function deleteMemberFromDb(partyID, sessionID) {
+  // Get current members
+  const membersData = await readData(`${partyID}/members`);
+  const members = membersData ? Object.values(membersData) : [];
+
+  if (members.length > 0) {
+    // Filter out the member to delete
+    const updatedMembers = members.filter((member) => member.id !== sessionID);
+
+    // Remove their matches
+    await deleteMemberMatches(partyID, sessionID);
+
+    // Update the database
+    await writeData(`${partyID}/members`, updatedMembers);
+    console.log("Member deleted successfully");
+  } else {
+    throw new Error("Party not found or no members to delete");
+  }
+}
+
 
 // handle case where party is already gone from db
 export async function POST() {
@@ -17,8 +40,9 @@ export async function POST() {
   }
 
   try {
-    // Delete member
-    await deleteMember(partyID, sessionID);
+    // Delete member data
+    await deleteMemberFromDb(partyID, sessionID);
+
 
     // Clear cookies
     await clearCookies();

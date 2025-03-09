@@ -39,12 +39,52 @@ export const getMembersRef = (partyID) => {
   return ref(database, `/${partyID}/members`);
 };
 
+/**
+ * Used on /join to provide live party member count
+ * @param {*} partyID 
+ * @param {*} callback 
+ * @returns 
+ */
 export const listenToMembers = (partyID, callback) => {
-  const membersRef = getMembersRef(partyID);
+  const membersRef = ref(database, `/${partyID}/members`);
   const unsubscribe = onValue(membersRef, (snapshot) => {
     const membersData = snapshot.val();
     callback(membersData || {});
   });
 
   return () => off(membersRef, 'value', unsubscribe);
+};
+
+
+
+/**
+ * Used on /swipe to watch for a party match
+ * @param {*} partyID 
+ * @param {*} callback 
+ * @returns 
+ */
+export const listenToBusinessMatch = (partyID, callback) => {
+  const businessMatchRef = ref(database, `/${partyID}/businessMatch`);
+  const unsubscribe = onValue(businessMatchRef, (snapshot) => {
+    const businessMatchData = snapshot.val();
+    callback(businessMatchData || null);
+  });
+
+  return () => off(businessMatchRef, 'value', unsubscribe);
+};
+
+/**
+ * Used on /swipe to watch for how many businesses have been eliminated
+ * @param {*} partyID 
+ * @param {*} callback 
+ * @returns 
+ */
+export const listenToEliminationCount = (partyID, callback) => {
+  const eliminationCountRef = ref(database, `/${partyID}/eliminationCount`);
+  const unsubscribe = onValue(eliminationCountRef, (snapshot) => {
+    const eliminationCountData = snapshot.val();
+    callback(eliminationCountData || 0);
+  });
+
+  return () => off(eliminationCountRef, 'value', unsubscribe);
 };

@@ -90,10 +90,16 @@ function Home() {
       setJoinError(null);
   
       try {
-    
+        // Check that party exists
         const party = await readData(`/${partyID}`);
         if (!party) {
           setJoinError('Party not found');
+          return;
+        }
+        // Check that party is not closed
+        const isClosed = await readData(`/${partyID}/isStarted`);
+        if (isClosed) {
+          setJoinError('This party is closed');
           return;
         }
         if (router) {
@@ -127,7 +133,7 @@ function Home() {
         <button className="primary mb-4" type="submit" name="createParty" disabled={loadingCurrLocation}>Create a party</button>
         <button className="secondary hidden" type="submit" name="partyOfOne" disabled={loadingCurrLocation}>Dine alone</button>
       </Form>
-      <p className="mt-6 h-[1rem]">{locationError && locationError}</p>
+      <p className="mt-6 h-[1rem] error">{locationError && locationError}</p>
       <h3 className="italic mb-14">or</h3>
       <Form onSubmit={handleJoin} className="w-full">
         <input
@@ -139,7 +145,7 @@ function Home() {
         />
         <button className="secondary mb-4" type="submit" name="createParty">Join a party</button>
       </Form>
-      <p className="mt-6 h-[1rem]">{joinError && joinError}</p>
+      <p className="mt-6 h-[1rem] error">{joinError && joinError}</p>
     </div>
     
   );
