@@ -107,6 +107,7 @@ async function getNextBusiness(partyID, sessionID) {
 
   // Return if no cards left
   if (numViewed == businesses.length || eliminationCount == businesses.length) {
+    console.log(numViewed + "/" + businesses.length);
     console.log('No cards left');
     setNoCardsLeft(true);
     return null;
@@ -175,8 +176,12 @@ async function getNextBusiness(partyID, sessionID) {
     try {
      // Reset matches
      resetMatches(partyID);
+     setBusinessMatch(null);
+     setEliminationCount(0);
      setNoCardsLeft(false);
-     setNumCardsViewed(0);
+     setCurrBusiness(await getNextBusiness(partyID, sessionID));
+   
+     // setNumCardsViewed(0);
 
     } catch (err) {
       console.error(err);

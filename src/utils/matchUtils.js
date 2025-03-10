@@ -43,8 +43,8 @@ async function setMatch(partyID, sessionID, businessRef, decision) {
             await checkPartyMatch(partyID, businessRef, businessIndex);
         }
     
-        // If no, mark this business as eliminated and eliminations++
-        if (decision == false) {
+        // If no, mark this business as eliminated and eliminations++ (if it isn't already)
+        if (decision == false && !partyRef.businesses[businessIndex].eliminated) {
             await writeData(`/${partyID}/businesses/${businessIndex}/eliminated`, true);
             const eliminationCount = await readData(`/${partyID}/eliminationCount`);
             await writeData(`/${partyID}/eliminationCount`, eliminationCount + 1);
