@@ -1,30 +1,22 @@
 import { getCookie, clearCookies } from '@/utils/cookieUtils';
-import { readData, writeData } from '@/utils/firebaseUtils';
+import { removeData } from '@/utils/firebaseUtils';
 import { deleteMemberMatches } from '@/utils/matchUtils';
 
-
-async function deleteMemberFromDb(partyID, sessionID) {
-  // Get current members
-  const membersData = await readData(`${partyID}/members`);
-  const members = membersData ? Object.values(membersData) : [];
-
-  if (members.length > 0) {
-    // Filter out the member to delete
-    const updatedMembers = members.filter((member) => member.id !== sessionID);
-
-    // Remove their matches
+/**
+ * Remove the data of the given member
+ * @param partyID 
+ * @param sessionID 
+ */
+async function deleteMemberData(partyID, sessionID) {
+  try {
+    await removeData(`/${partyID}/members/${sessionID}`);
     await deleteMemberMatches(partyID, sessionID);
-
-    // Update the database
-    await writeData(`${partyID}/members`, updatedMembers);
-    console.log("Member deleted successfully");
-  } else {
-    throw new Error("Party not found or no members to delete");
+  } catch (err) {
+    console.error(err);
   }
 }
 
-
-// handle case where party is already gone from db
+// todo handle case where party is already gone from db
 export async function POST() {
   console.log('Deleting member...');
   const sessionID = await getCookie('sessionID');
@@ -41,12 +33,10 @@ export async function POST() {
 
   try {
     // Delete member data
-    await deleteMemberFromDb(partyID, sessionID);
-
+    await deleteMemberData(partyID, sessionID);
 
     // Clear cookies
     await clearCookies();
-
 
     return new Response(JSON.stringify({ message: 'Member deleted successfully' }), {
       status: 200,
@@ -59,15 +49,4 @@ export async function POST() {
       headers: { 'Content-Type': 'application/json' },
     });
   }
-}
-
-export async function handler(req) {
-  if (req.method === 'POST') {
-    return POST(req);
-  }
-
-  return new Response(JSON.stringify({ message: 'Method Not Allowed' }), {
-    status: 405,
-    headers: { 'Content-Type': 'application/json' },
-  });
 }

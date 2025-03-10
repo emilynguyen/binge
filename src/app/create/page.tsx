@@ -43,7 +43,7 @@ export default function Create() {
       await axios.post('/api/delete-member', { partyID });
     } catch (err) {
       console.error(err);
-      setError('Failed to leave party, try again');
+     // setError('Failed to leave party, try again');
     }
    // Go back home
    router.push('/');

@@ -1,4 +1,4 @@
-import { writeData, readData } from "@/utils/firebaseUtils";
+import { writeData, readData, pushData } from "@/utils/firebaseUtils";
 
 
 /**
@@ -36,22 +36,25 @@ async function setMatch(partyID, sessionID, businessRef, decision) {
         const businessIndex = partyRef.businesses.findIndex(business => business.id == businessRef.id
         );
 
-        // If true, set matches[sessionID] = true
+        // If yes, set matches[sessionID] = true
         if (decision == true) {
             await writeData(`/${partyID}/businesses/${businessIndex}/matches/${sessionID}`, true);
             // Check if this business is now a party match
             await checkPartyMatch(partyID, businessRef, businessIndex);
         }
     
-        // If false, mark this business as eliminated and eliminations++
+        // If no, mark this business as eliminated and eliminations++
         if (decision == false) {
             await writeData(`/${partyID}/businesses/${businessIndex}/eliminated`, true);
             const eliminationCount = await readData(`/${partyID}/eliminationCount`);
             await writeData(`/${partyID}/eliminationCount`, eliminationCount + 1);
         }
 
-    } catch {
-        console.error('Error setting a match for user ' + sessionID);
+        // Mark this card as viewed
+        await pushData(`/${partyID}/members/${sessionID}/viewed`, { name: businessRef.name }, businessRef.id);
+
+    } catch (err) {
+        console.error(err);
     }
 }
 
@@ -73,8 +76,8 @@ async function initializeMemberMatches(partyID, sessionID) {
         }
 
         await writeData(`/${partyID}/businesses`, businessesRef);
-    } catch {
-        console.error('Error initializing matches for user ' + sessionID);
+    } catch (err) {
+        console.error(err);
     }
 }
 
@@ -97,8 +100,8 @@ async function deleteMemberMatches(partyID, sessionID) {
 
 
         await writeData(`/${partyID}/businesses`, businessesRef);
-    } catch {
-        console.error('Error deleting matches for user ' + sessionID);
+    } catch (err) {
+        console.error(err);
     }
 }
 
@@ -108,8 +111,9 @@ async function resetMatches(partyID) {
         const partyRef = await readData(`/${partyID}`);
         const businessesRef = partyRef.businesses;
 
-        // Reset elimination count
+        // Reset elimination count and match
         partyRef.eliminationCount = 0;
+        partyRef.businessMatch = null;
 
         // Reset matches
         for (let businessKey in businessesRef) {
@@ -121,9 +125,14 @@ async function resetMatches(partyID) {
             }
         }
 
+        // Reset viewed cards
+        for (let memberKey in partyRef.members) {
+            partyRef.members[memberKey].viewed = false;
+        }
+
         await writeData(`/${partyID}`, partyRef);
-    } catch {
-        console.error('Error resetting matches for party ' + partyID);
+    } catch (err) {
+        console.error(err);
     }
 }
 

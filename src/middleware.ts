@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { readData } from '@/utils/firebaseUtils';
-import { clearCookies, deleteCookie } from '@/utils/cookieUtils';
+import { clearCookies } from '@/utils/cookieUtils';
 
 
 
@@ -228,11 +228,11 @@ export async function middleware(req) {
   // Redirect if cookies
   if (sessionID && partyID) {
     try {
-      // TODO Delete cookies if party expired or ended
+      // Delete cookies if party expired or ended
       const partyRef = await readData(`/${partyID}`);
       if (!partyRef) {
         clearCookies();
-        return NextResponse.redirect(new URL('/', req.url));
+        return NextResponse.next();
       }
 
       const isStarted = await isPartyStarted(partyID);

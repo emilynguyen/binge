@@ -1,10 +1,10 @@
-import { ref, set, get, child, onValue, off } from "firebase/database";
+import { ref, set, get, child, onValue, off, push } from "firebase/database";
 import { database } from "@/lib/firebase";
 
 export const writeData = async (path, data) => {
   try {
     await set(ref(database, path), data);
-    console.log("Data written successfully!");
+    console.log("Data written successfully");
   } catch (error) {
     console.error("Error writing data: ", error);
   }
@@ -22,6 +22,24 @@ export const readData = async (path) => {
     }
   } catch (error) {
     console.error("Error reading data: ", error);
+    return null;
+  }
+};
+
+export const pushData = async (path, data, customKey = null) => {
+  const dbRef = ref(database, path);
+  try {
+    let newRef;
+    if (customKey) {
+      newRef = ref(database, `${path}/${customKey}`);
+      await set(newRef, data);
+    } else {
+      newRef = push(dbRef);
+      await set(newRef, data);
+    }
+    return newRef.key || customKey;
+  } catch (error) {
+    console.error("Error pushing data: ", error);
     return null;
   }
 };
@@ -55,6 +73,21 @@ export const listenToMembers = (partyID, callback) => {
   return () => off(membersRef, 'value', unsubscribe);
 };
 
+/**
+ * Used on /join to check when party starts
+ * @param {*} partyID 
+ * @param {*} callback 
+ * @returns 
+ */
+export const listenToStart = (partyID, callback) => {
+  const startRef = ref(database, `/${partyID}/isStarted`);
+  const unsubscribe = onValue(startRef, (snapshot) => {
+    const startData = snapshot.val();
+    callback(startData || false);
+  });
+
+  return () => off(startRef, 'value', unsubscribe);
+};
 
 
 /**

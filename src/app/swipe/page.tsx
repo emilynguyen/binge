@@ -15,19 +15,10 @@ import { setMatch, resetMatches } from '@/utils/matchUtils';
 
 const xIcon = "/icons/x_40x40.svg";
 const smileyIcon = "/icons/smiley_40x40.svg";
+const yelpIcon = "/icons/yelp_40x40.svg";
+const mapsIcon = "/icons/google-maps_40x40.svg";
 
-async function getNextBusiness(partyID) {
-  const businesses = await readData(`/${partyID}/businesses`);
-  
-  while (true) {
-    const randomIndex = Math.floor(Math.random() * businesses.length);
-  
-    // Return next business index if eliminated = false
-    if (!businesses[randomIndex].eliminated) {
-      return businesses[randomIndex];
-    }
-  }
-}
+
 
 
 const Swipe = () => {
@@ -43,10 +34,11 @@ const Swipe = () => {
   const [businessMatch, setBusinessMatch] = useState(null);
   const [eliminationCount, setEliminationCount] = useState(0);
   const [numCards, setNumCards] = useState(0);
+  const [noCardsLeft, setNoCardsLeft] = useState(false);
 
 
   // Messages
-  const [message, setMessage] = useState('...');
+//  const [message, setMessage] = useState('...');
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -59,19 +51,17 @@ const Swipe = () => {
     setSessionID(sessionIDParam);
 
     const fetchData = async () => {
-
         try {
           const partyRef = await readData(`/${partyIDParam}`);
           setLocation(partyRef.location);
           setBusinessMatch(partyRef.businessMatch);
           setEliminationCount(partyRef.eliminationCount);
           setNumCards(partyRef.businesses.length);
-          setCurrBusiness(await getNextBusiness(partyIDParam));
+          setCurrBusiness(await getNextBusiness(partyIDParam, sessionIDParam));
 
         } catch (err) {
           console.error(err);
-          setMessage('Failed to fetch data');
-          setError(true);
+          setError('Failed to fetch data');
         }
     };
 
@@ -100,7 +90,34 @@ const Swipe = () => {
     
   }, []);
 
+/**
+ * Returns a random business that is not eliminated or viewed yet by the given member
+ * @param partyID 
+ * @param sessionID 
+ * @returns business obj
+ */
+async function getNextBusiness(partyID, sessionID) {
+  
+  const party = await readData(`/${partyID}`);
+  const businesses = party.businesses;
+  const viewedBusinesses = party.members[sessionID].viewed;
 
+  // Return if no cards left
+  if (viewedBusinesses.length == businesses.length) {
+    setNoCardsLeft(true);
+    return null;
+  }
+  
+  while (true) {
+    const randomIndex = Math.floor(Math.random() * businesses.length);
+    const randomBusiness = businesses[randomIndex];
+  
+    // Return next business index if eliminated = false and unviewed
+    if (!randomBusiness.eliminated && !viewedBusinesses[randomBusiness]) {
+      return randomBusiness;
+    }
+  }
+}
 
 
   /*
@@ -108,8 +125,8 @@ const Swipe = () => {
    */
   async function handleNoClick() {
     try {
-      setMatch(partyID, sessionID, currBusiness, false);
-      setCurrBusiness(await getNextBusiness(partyID));
+      await setMatch(partyID, sessionID, currBusiness, false);
+      setCurrBusiness(await getNextBusiness(partyID, sessionID));
     } catch (err) {
       console.log(err);
     }
@@ -117,11 +134,16 @@ const Swipe = () => {
   /*
    * Click handler for yes button / right swipe
    */
-  const handleYesClick = () => {
-    setMatch(partyID, sessionID, currBusiness, true);
-  };
-
-
+  async function handleYesClick() {
+    try {
+      await setMatch(partyID, sessionID, currBusiness, true);
+      if (!businessMatch) {
+        setCurrBusiness(await getNextBusiness(partyID, sessionID));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   const handleYelpClick = () => {
     window.open(businessMatch.url, '_blank');
@@ -134,7 +156,7 @@ const Swipe = () => {
   };
 
 
-  async function handleStartOver() {
+  async function handleLeaveParty() {
     try {
       await axios.post('/api/delete-member', { partyID });
     } catch (err) {
@@ -165,15 +187,16 @@ const Swipe = () => {
       </h1>
       
       <div>
-        <Button className="mb-4 tertiary" text="View on Yelp" onClick={handleYelpClick}/>
-        <Button className="tertiary" text="Open in Google Maps"  onClick={handleGoogleMapsClick}/>
-        <a className="cursor-pointer mt-16 inline-block" onClick={handleStartOver}>Start over</a>
+        <Button className="mb-4 secondary" text="View on Yelp" icon={yelpIcon} onClick={handleYelpClick}/>
+        <Button className="mb-4 secondary" text="Open in Google Maps" icon={mapsIcon} onClick={handleGoogleMapsClick}/>
+        <Button className="tertiary" text="Try again" onClick={handleTryAgain}/>
+        <a className="cursor-pointer mt-16 inline-block" onClick={handleLeaveParty}>Leave party</a>
       </div>
     </>
   );
  }
 
- if (eliminationCount >= numCards) {
+ if (numCards && eliminationCount >= numCards) {
   return (
     <>
     <h1>
@@ -182,7 +205,7 @@ const Swipe = () => {
     
     <div>
       <Button className="secondary" text="Try again" onClick={handleTryAgain}/>
-      <a className="cursor-pointer mt-16 inline-block" onClick={handleStartOver}>End party</a>
+      <a className="cursor-pointer mt-16 inline-block" onClick={handleLeaveParty}>Leave party</a>
     </div>  
     <p className="mt-6 h-[1rem] error">{error && error}</p>
   </>
@@ -191,29 +214,35 @@ const Swipe = () => {
 
   return (
     <>
-      <div className="">
+      <div className="w-full">
         {currBusiness ? (
-          <p>{eliminationCount} / {numCards} cards eliminated</p>
+          <div className="flex justify-between flex-row">
+            <p>{numCards - eliminationCount} / {numCards} cards left</p>
+            <p><a className="cursor-pointer inline-block" onClick={handleLeaveParty}>Leave party</a></p>
+          </div>
         ) : (
           <p>&nbsp;</p>
         )}
       </div>
       <div className="w-full flex flex-col grow justify-center gap-4">
-        {currBusiness ? (
+        {!noCardsLeft ? (
           <>
             {/* Card */}
             <BusinessCard business={currBusiness} location={location} />
             {/* Buttons */}
             <div className="flex w-full gap-4">
-              <Button className="secondary" text="No" icon={xIcon} onClick={handleNoClick} />
-              <Button className="primary" text="Yes" icon={smileyIcon} onClick={handleYesClick} />
+              <Button className="secondary" alt="No" icon={xIcon} onClick={handleNoClick} />
+              <Button className="primary" alt="Yes" icon={smileyIcon} onClick={handleYesClick} />
             </div>
           </>
         ) : (
-          
-          <h2 className="mt-[-4rem] mb-6">{message}</h2>
+          <div>
+            <h1>No cards left</h1>
+            <div className="mt-8 mb-6">Waiting for a match...</div>
+          </div>
         )}
-         <p className="mt-6 h-[1rem] error">{error && error}</p>
+
+         <p className="mt-2 h-[1rem] error">{error && error}</p>
       </div>
     </>
   );

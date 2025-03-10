@@ -5,12 +5,13 @@ import Button from "@/components/ui/Button";
 import Header from "@/components/layout/Header";
 import { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
-import { listenToMembers, writeData } from '@/utils/firebaseUtils';
+import { listenToMembers, listenToStart, writeData } from '@/utils/firebaseUtils';
 
 
 export default function Join() {
     const [partyID, setPartyID] = useState("...");
     const [memberCount, setMemberCount] = useState("...");
+    const [isStarted, setIsStarted] = useState(false);
     const [error, setError] = useState("");
     const router = useRouter();
     
@@ -20,22 +21,33 @@ export default function Join() {
     const partyIDParam = urlParams.get('party');
     setPartyID(partyIDParam);
 
+    // Member count listener
     const updateMemberCount = (membersData) => {
-      if (membersData) {
-        setMemberCount(Object.keys(membersData).length);
-      } else {
-        setMemberCount(0);
-      }
+        setMemberCount(Object.keys(membersData).length || 0);
     };
 
-    const unsubscribe = listenToMembers(partyIDParam, updateMemberCount);
+    const unsubscribeMemberCount = listenToMembers(partyIDParam, updateMemberCount);
+
+    // Start listener
+    const updateIsStarted = (startedData) => {
+      setIsStarted(startedData || false);
+    };
+
+    const unsubscribeStart = listenToStart(partyIDParam, updateIsStarted);
 
     // Cleanup listener on component unmount
     return () => {
-      unsubscribe();
+      unsubscribeMemberCount();
+      unsubscribeStart();
     };
-    // removed partyID?
   }, []);
+
+
+  useEffect(() => {
+    if (isStarted) {
+        router.push(`/swipe?party=${partyID}`);
+    }
+  }, [isStarted]);
 
 
   async function handleLeaveParty() {
@@ -64,7 +76,7 @@ export default function Join() {
   return (
     <>
       <Header text={<i>Waiting for your whole party...</i>} />
-      <div className="grow flex flex-col">
+      <div className="grow flex flex-col w-full">
         <div>
           <span className="border rounded-[50%] mt-4 pr-6 pl-6 pt-[.2rem] pb-[.2rem] tracking-wider inline-block mb-auto self-auto">{partyID}</span>
          </div>
@@ -72,7 +84,7 @@ export default function Join() {
         <div className="w-full grow relative flex flex-col justify-center pt-20 mb-16">
             <div>
             <h1 className="mb-16">This is currently<br></br>a party of ({memberCount})</h1>
-            <Button className="primary" text="Everyone is here"  onClick={handleStart}/>
+            <Button className="primary w-full" text="Everyone is here"  onClick={handleStart}/>
             <a className="cursor-pointer mt-16 inline-block" onClick={handleLeaveParty}>Leave party</a>
             <p className="mt-6 h-[1rem] error">{error && error}</p>
             </div>

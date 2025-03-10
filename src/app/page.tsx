@@ -91,14 +91,13 @@ function Home() {
   
       try {
         // Check that party exists
-        const party = await readData(`/${partyID}`);
-        if (!party) {
+        const partyRef = await readData(`/${partyID}`);
+        if (!partyRef) {
           setJoinError('Party not found');
           return;
         }
-        // Check that party is not closed
-        const isClosed = await readData(`/${partyID}/isStarted`);
-        if (isClosed) {
+        // Check that party is still open
+        if (partyRef.isStarted) {
           setJoinError('This party is closed');
           return;
         }

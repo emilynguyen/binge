@@ -1,5 +1,6 @@
 import { setCookie } from '@/utils/cookieUtils';
-import writeMember from '@/utils/writeMember';
+import { pushData } from "@/utils/firebaseUtils";
+import { initializeMemberMatches } from "@/utils/matchUtils";
 
 export async function POST(req) {
   const { partyID } = await req.json();
@@ -15,7 +16,10 @@ export async function POST(req) {
 
   try {
     // Create member and get their sessionID
-    const sessionID = await writeMember(partyID);
+    const sessionID = await pushData(`/${partyID}/members`, { viewed: false })
+
+    // Initialize matches
+    await initializeMemberMatches(partyID, sessionID);
 
     // Set cookies
     await setCookie('sessionID', sessionID);
@@ -28,8 +32,8 @@ export async function POST(req) {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
-  } catch (error) {
-    console.error('Error creating member', error);
+  } catch (err) {
+    console.error('Error creating member', err);
     return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
