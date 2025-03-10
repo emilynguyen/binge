@@ -218,7 +218,7 @@ async function getNextBusiness(partyID, sessionID) {
       <div className="w-full">
         {currBusiness ? (
           <div className="flex justify-between flex-row">
-            <p>{numCards - eliminationCount} / {numCards} cards left <br></br>No cards left: {noCardsLeft}</p>
+            <p>{numCards - eliminationCount} cards left</p>
             <p><a className="cursor-pointer inline-block" onClick={handleLeaveParty}>Leave party</a></p>
           </div>
         ) : (
