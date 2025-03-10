@@ -113,7 +113,8 @@ async function getNextBusiness(partyID, sessionID) {
     const randomBusiness = businesses[randomIndex];
   
     // Return next business index if eliminated = false and unviewed
-    if (!randomBusiness.eliminated && !viewedBusinesses[randomBusiness]) {
+    if (!randomBusiness.eliminated && !viewedBusinesses[randomBusiness.id]) {
+      console.log(viewedBusinesses[randomBusiness]);
       return randomBusiness;
     }
   }
