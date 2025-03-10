@@ -142,7 +142,7 @@ function Home() {
           type="text"
           required
         />
-        <button className="secondary mb-4" type="submit" name="createParty">Join a party</button>
+        <button className="secondary mb-4" type="submit" name="joinParty">Join a party</button>
       </Form>
       <p className="mt-6 h-[1rem] error">{joinError && joinError}</p>
     </div>

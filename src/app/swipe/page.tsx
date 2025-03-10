@@ -34,6 +34,8 @@ const Swipe = () => {
   const [businessMatch, setBusinessMatch] = useState(null);
   const [eliminationCount, setEliminationCount] = useState(0);
   const [numCards, setNumCards] = useState(0);
+ // const [numCardsViewed, setNumCardsViewed] = useState(0);
+
   const [noCardsLeft, setNoCardsLeft] = useState(false);
 
 
@@ -101,9 +103,10 @@ async function getNextBusiness(partyID, sessionID) {
   const businesses = party.businesses;
   const viewedBusinesses = party.members[sessionID].viewed;
   const numViewed = Object.keys(viewedBusinesses).length;
+ // setNumCardsViewed(numViewed);
 
   // Return if no cards left
-  if (numViewed == businesses.length) {
+  if (numViewed == businesses.length || eliminationCount == businesses.length) {
     console.log('No cards left');
     setNoCardsLeft(true);
     return null;
@@ -172,6 +175,8 @@ async function getNextBusiness(partyID, sessionID) {
     try {
      // Reset matches
      resetMatches(partyID);
+     setNoCardsLeft(false);
+     setNumCardsViewed(0);
 
     } catch (err) {
       console.error(err);
@@ -216,14 +221,10 @@ async function getNextBusiness(partyID, sessionID) {
   return (
     <>
       <div className="w-full">
-        {currBusiness ? (
           <div className="flex justify-between flex-row">
-            <p>{numCards - eliminationCount} cards left</p>
+            <p>{numCards - eliminationCount} uneliminated cards left</p>
             <p><a className="cursor-pointer inline-block" onClick={handleLeaveParty}>Leave party</a></p>
           </div>
-        ) : (
-          <p>&nbsp;</p>
-        )}
       </div>
       <div className="w-full flex flex-col grow justify-center gap-4">
         {!noCardsLeft ? (
