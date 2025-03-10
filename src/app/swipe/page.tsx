@@ -97,13 +97,14 @@ const Swipe = () => {
  * @returns business obj
  */
 async function getNextBusiness(partyID, sessionID) {
-  
   const party = await readData(`/${partyID}`);
   const businesses = party.businesses;
   const viewedBusinesses = party.members[sessionID].viewed;
+  const numViewed = Object.keys(viewedBusinesses).length;
 
   // Return if no cards left
-  if (viewedBusinesses.length == businesses.length) {
+  if (numViewed == businesses.length) {
+    console.log('No cards left');
     setNoCardsLeft(true);
     return null;
   }
@@ -114,7 +115,6 @@ async function getNextBusiness(partyID, sessionID) {
   
     // Return next business index if eliminated = false and unviewed
     if (!randomBusiness.eliminated && !viewedBusinesses[randomBusiness.id]) {
-      console.log(viewedBusinesses[randomBusiness]);
       return randomBusiness;
     }
   }
@@ -218,7 +218,7 @@ async function getNextBusiness(partyID, sessionID) {
       <div className="w-full">
         {currBusiness ? (
           <div className="flex justify-between flex-row">
-            <p>{numCards - eliminationCount} / {numCards} cards left</p>
+            <p>{numCards - eliminationCount} / {numCards} cards left <br></br>No cards left: {noCardsLeft}</p>
             <p><a className="cursor-pointer inline-block" onClick={handleLeaveParty}>Leave party</a></p>
           </div>
         ) : (
