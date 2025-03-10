@@ -106,6 +106,7 @@ async function getNextBusiness(partyID, sessionID) {
  // setNumCardsViewed(numViewed);
 
   // Return if no cards left
+  console.log(numViewed + " cards viewed");
   if (numViewed == businesses.length || eliminationCount == businesses.length) {
    // console.log(numViewed + "/" + businesses.length);
     //console.log('No cards left');
@@ -113,7 +114,8 @@ async function getNextBusiness(partyID, sessionID) {
     return null;
   }
   
-  while (true) {
+  let attempts = 0;
+  while (attempts < 5000) {
     console.log("Getting next business...");
     const randomIndex = Math.floor(Math.random() * businesses.length);
     const randomBusiness = businesses[randomIndex];
@@ -122,6 +124,7 @@ async function getNextBusiness(partyID, sessionID) {
     if (!randomBusiness.eliminated && !viewedBusinesses[randomBusiness.id]) {
       return randomBusiness;
     }
+    attempts++;
   }
 }
 
@@ -143,7 +146,9 @@ async function getNextBusiness(partyID, sessionID) {
   async function handleYesClick() {
     try {
       await setMatch(partyID, sessionID, currBusiness, true);
+      const businessMatch = await readData(`/${partyID}/businessMatch`);
       if (!businessMatch) {
+        console.log('Not a match, getting next business...');
         setCurrBusiness(await getNextBusiness(partyID, sessionID));
       }
     } catch (err) {
