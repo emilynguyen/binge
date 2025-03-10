@@ -227,12 +227,15 @@ export async function middleware(req) {
 
   // Redirect if cookies
   if (sessionID && partyID) {
+    console.log('Cookies are set: ' + sessionID + ', ' + partyID);
     try {
       // Delete cookies if party expired or ended
       const partyRef = await readData(`/${partyID}`);
       if (!partyRef) {
-        clearCookies();
-        return NextResponse.next();
+        console.log('Party not found, clearing cookies');
+        await clearCookies();
+        // might cause infinite loop idk
+        return NextResponse.redirect(new URL('/', req.url));
       }
 
       const isStarted = await isPartyStarted(partyID);
@@ -257,7 +260,7 @@ export async function middleware(req) {
   }
 
   
-
+  console.log('No cookies set');
 
 
   if (pathname === '/') {

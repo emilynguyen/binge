@@ -114,6 +114,7 @@ async function getNextBusiness(partyID, sessionID) {
   }
   
   while (true) {
+    console.log("Getting next business...");
     const randomIndex = Math.floor(Math.random() * businesses.length);
     const randomBusiness = businesses[randomIndex];
   
