@@ -23,7 +23,7 @@ async function createParty(location) {
             'members' : [],
             'eliminationCount' : 0,
             'businessMatch': null,
-            'businesses' : await getBusinessesFromYelp(location, 200)
+            'businesses' : await getBusinessesFromYelp(location, 100)
         });
         console.log("Created new party: " + partyID);
         
