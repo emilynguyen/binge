@@ -8,8 +8,7 @@ import axios from 'axios';
 import BusinessCard from '@/components/ui/BusinessCard';
 import Button from '@/components/ui/Button';
 
-import { listenToBusinessMatch, listenToEliminationCount, listenToViewCount, listenToTryAgainTrigger, writeData, readData } from '@/utils/firebaseUtils';
-//import shuffleArray from "@/utils/shuffleArray";
+import { listenToBusinessMatch, listenToEliminationCount, readData } from '@/utils/firebaseUtils';
 import { setMatch, resetMatches } from '@/utils/matchUtils';
 
 
@@ -28,7 +27,6 @@ const Swipe = () => {
   const [partyID, setPartyID] = useState('');
   const [sessionID, setSessionID] = useState('');
   const [location, setLocation] = useState('');
-  const [tryAgain, setTryAgain] = useState(false);
 
 
   // Business data
@@ -38,10 +36,24 @@ const Swipe = () => {
   const [numCards, setNumCards] = useState(0);
   const [viewCount, setViewCount] = useState(0);
 
-
   // Messages
-//  const [message, setMessage] = useState('...');
   const [error, setError] = useState(false);
+
+  const fetchData = async (partyIDParam, sessionIDParam) => {
+    try {
+      //console.log('FETCHING DATA');
+      const partyRef = await readData(`/${partyIDParam}`);
+      setLocation(partyRef.location);
+      setBusinessMatch(partyRef.businessMatch);
+      setEliminationCount(partyRef.eliminationCount);
+      setNumCards(partyRef.businesses.length);
+      setViewCount(Object.keys(partyRef.members[sessionIDParam].viewed).length);
+      setCurrBusiness(await getNextBusiness(partyIDParam, sessionIDParam));
+    } catch (err) {
+      console.error(err);
+      setError('Failed to fetch data');
+    }
+  };
 
   useEffect(() => {
     // URL data
@@ -52,28 +64,15 @@ const Swipe = () => {
     setPartyID(partyIDParam);
     setSessionID(sessionIDParam);
 
-    const fetchData = async () => {
-      try {
-        console.log('FETCHING DATA');
-        const partyRef = await readData(`/${partyIDParam}`);
-        //console.log(partyRef.businesses);
-        setLocation(partyRef.location);
-        setBusinessMatch(partyRef.businessMatch);
-        setEliminationCount(partyRef.eliminationCount);
-        setNumCards(partyRef.businesses.length);
-        setCurrBusiness(await getNextBusiness(partyIDParam, sessionIDParam));
-  
-      } catch (err) {
-        console.error(err);
-       // setError('Failed to fetch data');
-      }
-  };
+    fetchData(partyIDParam, sessionIDParam);
 
-    fetchData();
 
     // Match listener
     const updateBusinessMatch = (businessMatchData) => {
       setBusinessMatch(businessMatchData || null);
+      if (businessMatchData === null) {
+         fetchData(partyIDParam, sessionIDParam); // refresh data when businessMatch is reset to null
+      }
     };
 
     const unsubscribeBusinessMatch = listenToBusinessMatch(partyIDParam, updateBusinessMatch);
@@ -85,33 +84,14 @@ const Swipe = () => {
 
     const unsubscribeEliminationCount = listenToEliminationCount(partyIDParam, updateEliminationCount);
 
-    // Card view count listener
-    const updateViewCount = (viewCountData) => {
-      setViewCount(viewCountData || 0);
-      console.log('view count listener: ' + viewCountData);
-    };
-
-    const unsubscribeViewCount = listenToViewCount(partyIDParam, sessionIDParam, updateViewCount);
-
-     // Try again trigger listener
-     const updateTryAgainTrigger = async () => {
-     // fetchData(partyIDParam, sessionIDParam);
-      await writeData(`/${partyID}/tryAgainTrigger`, false);
-      setTryAgain(false);
-    };
-
-    const unsubscribeTryAgainTrigger = listenToTryAgainTrigger(partyIDParam, updateTryAgainTrigger);
-
     // Cleanup listeners on component unmount
     return () => {
       unsubscribeBusinessMatch();
       unsubscribeEliminationCount();
-      unsubscribeViewCount();
-      unsubscribeTryAgainTrigger();
     };
 
     
-  }, [tryAgain]);
+  }, []);
 
 
 
@@ -122,17 +102,19 @@ const Swipe = () => {
  * @returns business obj
  */
 async function getNextBusiness(partyID, sessionID) {
+ // console.log('Getting next business...');
   const party = await readData(`/${partyID}`);
   const businesses = party.businesses;
   const viewedBusinesses = party.members[sessionID].viewed;
   // Note: don't use view count since it might not be initialized on first load
   const updatedViewCount = Object.keys(viewedBusinesses).length;
+  setViewCount(updatedViewCount);
 
   //console.log("Viewed " + updatedViewCount + "/" + numCards);
 
 
   // Return if no cards left
-  if (updatedViewCount == numCards || eliminationCount == numCards) {
+  if (updatedViewCount == businesses.length || party.eliminationCount == businesses.length) {
     console.log(updatedViewCount + "/" + businesses.length);
     console.log('No cards left');
    // setNoCardsLeft(true);
@@ -209,13 +191,18 @@ async function getNextBusiness(partyID, sessionID) {
   async function handleTryAgain() {
     try {
      // Reset matches
+     // Rerender for everyone is triggered when db data is reset
      await resetMatches(partyID);
+      
+     setBusinessMatch(null);
+     setEliminationCount(0);
 
-     // Trigger a data refresh for everyone
-     await writeData(`/${partyID}/tryAgainTrigger`, true);
-     //await fetchData(partyID, sessionID);
-     setTryAgain(true);
-      console.log('RESTARTING');
+     // TODO Need listener to reset view count for everyone
+     setViewCount(0);
+ 
+     setCurrBusiness(await getNextBusiness(partyID, sessionID));
+     // console.log('RESTARTING');
+      
     } catch (err) {
       console.error(err);
       setError('Failed to reset cards, try again');
@@ -260,13 +247,19 @@ async function getNextBusiness(partyID, sessionID) {
     <>
       <div className="w-full">
           <div className="flex justify-between flex-row">
-            <p>{numCards - eliminationCount} uneliminated cards left</p>
+            <p>{numCards - eliminationCount} cards left</p>
             <p>{viewCount}/{numCards} viewed</p>
             <p><a className="cursor-pointer inline-block" onClick={handleLeaveParty}>Leave party</a></p>
           </div>
       </div>
       <div className="w-full flex flex-col grow justify-center gap-4">
-        {viewCount < numCards ? (
+        {(numCards && viewCount == numCards) ? 
+        (
+          <div>
+            <h1>No cards left</h1>
+            <div className="mt-8 mb-6">Waiting for a match...</div>
+          </div>
+        ) : (
           <>
             {/* Card */}
             <BusinessCard business={currBusiness} location={location} />
@@ -276,11 +269,6 @@ async function getNextBusiness(partyID, sessionID) {
               <Button className="primary" alt="Yes" icon={smileyIcon} onClick={handleYesClick} />
             </div>
           </>
-        ) : (
-          <div>
-            <h1>No cards left</h1>
-            <div className="mt-8 mb-6">Waiting for a match...</div>
-          </div>
         )}
 
          <p className="mt-2 h-[1rem] error">{error && error}</p>

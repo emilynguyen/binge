@@ -29,9 +29,10 @@ const Transportation = ({ type, origin, destination }) => {
         setError(data.error);
         setEstimates(null);
       }
-    } catch (error) {
+    } catch (err) {
       setError('?');
       setEstimates(null);
+      console.log(err);
     }
   };
 
