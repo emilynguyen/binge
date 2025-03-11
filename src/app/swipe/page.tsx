@@ -28,6 +28,8 @@ const Swipe = () => {
   const [partyID, setPartyID] = useState('');
   const [sessionID, setSessionID] = useState('');
   const [location, setLocation] = useState('');
+  const [tryAgain, setTryAgain] = useState(false);
+
 
   // Business data
   const [currBusiness, setCurrBusiness] = useState({});
@@ -50,9 +52,24 @@ const Swipe = () => {
     setPartyID(partyIDParam);
     setSessionID(sessionIDParam);
 
+    const fetchData = async () => {
+      try {
+        console.log('FETCHING DATA');
+        const partyRef = await readData(`/${partyIDParam}`);
+        //console.log(partyRef.businesses);
+        setLocation(partyRef.location);
+        setBusinessMatch(partyRef.businessMatch);
+        setEliminationCount(partyRef.eliminationCount);
+        setNumCards(partyRef.businesses.length);
+        setCurrBusiness(await getNextBusiness(partyIDParam, sessionIDParam));
+  
+      } catch (err) {
+        console.error(err);
+       // setError('Failed to fetch data');
+      }
+  };
 
-
-    fetchData(partyIDParam, sessionIDParam);
+    fetchData();
 
     // Match listener
     const updateBusinessMatch = (businessMatchData) => {
@@ -71,14 +88,16 @@ const Swipe = () => {
     // Card view count listener
     const updateViewCount = (viewCountData) => {
       setViewCount(viewCountData || 0);
+      console.log('view count listener: ' + viewCountData);
     };
 
     const unsubscribeViewCount = listenToViewCount(partyIDParam, sessionIDParam, updateViewCount);
 
      // Try again trigger listener
      const updateTryAgainTrigger = async () => {
-      fetchData(partyIDParam, sessionIDParam);
+     // fetchData(partyIDParam, sessionIDParam);
       await writeData(`/${partyID}/tryAgainTrigger`, false);
+      setTryAgain(false);
     };
 
     const unsubscribeTryAgainTrigger = listenToTryAgainTrigger(partyIDParam, updateTryAgainTrigger);
@@ -92,24 +111,9 @@ const Swipe = () => {
     };
 
     
-  }, []);
+  }, [tryAgain]);
 
-  async function fetchData(partyID, sessionID) {
-    try {
-      console.log('FETCHING DATA');
-      const partyRef = await readData(`/${partyID}`);
-      setLocation(partyRef.location);
-      setBusinessMatch(partyRef.businessMatch);
-      setEliminationCount(partyRef.eliminationCount);
-      setNumCards(partyRef.businesses.length);
-      console.log(partyRef.businesses.length);
-      setCurrBusiness(await getNextBusiness(partyID, sessionID));
 
-    } catch (err) {
-      console.error(err);
-     // setError('Failed to fetch data');
-    }
-};
 
 /**
  * Returns a random business that is not eliminated or viewed yet by the given member
@@ -121,15 +125,15 @@ async function getNextBusiness(partyID, sessionID) {
   const party = await readData(`/${partyID}`);
   const businesses = party.businesses;
   const viewedBusinesses = party.members[sessionID].viewed;
+  // Note: don't use view count since it might not be initialized on first load
   const updatedViewCount = Object.keys(viewedBusinesses).length;
 
-  console.log("Viewed " + updatedViewCount + "/" + numCards);
+  //console.log("Viewed " + updatedViewCount + "/" + numCards);
 
- 
 
   // Return if no cards left
   if (updatedViewCount == numCards || eliminationCount == numCards) {
-   // console.log(numViewed + "/" + businesses.length);
+    console.log(updatedViewCount + "/" + businesses.length);
     console.log('No cards left');
    // setNoCardsLeft(true);
     return null;
@@ -137,7 +141,7 @@ async function getNextBusiness(partyID, sessionID) {
   
   let attempts = 0;
   while (attempts < 5000) {
-    console.log("Getting next business...");
+   // console.log("Getting next business...");
     const randomIndex = Math.floor(Math.random() * businesses.length);
     const randomBusiness = businesses[randomIndex];
   
@@ -210,7 +214,7 @@ async function getNextBusiness(partyID, sessionID) {
      // Trigger a data refresh for everyone
      await writeData(`/${partyID}/tryAgainTrigger`, true);
      //await fetchData(partyID, sessionID);
-   
+     setTryAgain(true);
       console.log('RESTARTING');
     } catch (err) {
       console.error(err);
@@ -257,6 +261,7 @@ async function getNextBusiness(partyID, sessionID) {
       <div className="w-full">
           <div className="flex justify-between flex-row">
             <p>{numCards - eliminationCount} uneliminated cards left</p>
+            <p>{viewCount}/{numCards} viewed</p>
             <p><a className="cursor-pointer inline-block" onClick={handleLeaveParty}>Leave party</a></p>
           </div>
       </div>

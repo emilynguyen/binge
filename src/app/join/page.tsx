@@ -52,6 +52,7 @@ export default function Join() {
 
   async function handleLeaveParty() {
       try {
+        console.log('handleLeaveParty');
         await axios.post('/api/delete-member', { partyID });
       } catch (err) {
         console.error(err);

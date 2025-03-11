@@ -18,7 +18,6 @@ async function deleteMemberData(partyID, sessionID) {
 
 // todo handle case where party is already gone from db
 export async function POST() {
-  console.log('Deleting member...');
   const sessionID = await getCookie('sessionID');
   const partyID = await getCookie('partyID');
 
@@ -42,8 +41,8 @@ export async function POST() {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
-  } catch (error) {
-    console.error('Error deleting member', error);
+  } catch (err) {
+    console.error(err);
     return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
