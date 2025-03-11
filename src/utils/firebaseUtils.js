@@ -121,3 +121,31 @@ export const listenToEliminationCount = (partyID, callback) => {
 
   return () => off(eliminationCountRef, 'value', unsubscribe);
 };
+
+/**
+ * Used on /swipe to watch for member's card view count
+ * @param {*} partyID 
+ * @param {*} sessionID 
+ * @param {*} callback 
+ * @returns 
+ */
+export const listenToViewCount = (partyID, sessionID, callback) => {
+  const viewedRef = ref(database, `/${partyID}/members/${sessionID}/viewed`);
+  const unsubscribe = onValue(viewedRef, (snapshot) => {
+    const viewedData = snapshot.val();
+    const viewCount = viewedData ? Object.keys(viewedData).length : 0;
+    callback(viewCount);
+  });
+
+  return () => off(viewedRef, 'value', unsubscribe);
+};
+
+export const listenToTryAgainTrigger = (partyID, callback) => {
+  const triggerRef = ref(database, `/${partyID}/tryAgainTrigger`);
+  const unsubscribe = onValue(triggerRef, (snapshot) => {
+    const triggerData = snapshot.val();
+    callback(triggerData || false);
+  });
+
+  return () => off(triggerRef, 'value', unsubscribe);
+};

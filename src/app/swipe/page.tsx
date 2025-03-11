@@ -8,7 +8,7 @@ import axios from 'axios';
 import BusinessCard from '@/components/ui/BusinessCard';
 import Button from '@/components/ui/Button';
 
-import { listenToBusinessMatch, listenToEliminationCount, readData } from '@/utils/firebaseUtils';
+import { listenToBusinessMatch, listenToEliminationCount, listenToViewCount, listenToTryAgainTrigger, writeData, readData } from '@/utils/firebaseUtils';
 //import shuffleArray from "@/utils/shuffleArray";
 import { setMatch, resetMatches } from '@/utils/matchUtils';
 
@@ -34,9 +34,7 @@ const Swipe = () => {
   const [businessMatch, setBusinessMatch] = useState(null);
   const [eliminationCount, setEliminationCount] = useState(0);
   const [numCards, setNumCards] = useState(0);
- // const [numCardsViewed, setNumCardsViewed] = useState(0);
-
-  const [noCardsLeft, setNoCardsLeft] = useState(false);
+  const [viewCount, setViewCount] = useState(0);
 
 
   // Messages
@@ -52,22 +50,9 @@ const Swipe = () => {
     setPartyID(partyIDParam);
     setSessionID(sessionIDParam);
 
-    const fetchData = async () => {
-        try {
-          const partyRef = await readData(`/${partyIDParam}`);
-          setLocation(partyRef.location);
-          setBusinessMatch(partyRef.businessMatch);
-          setEliminationCount(partyRef.eliminationCount);
-          setNumCards(partyRef.businesses.length);
-          setCurrBusiness(await getNextBusiness(partyIDParam, sessionIDParam));
 
-        } catch (err) {
-          console.error(err);
-          setError('Failed to fetch data');
-        }
-    };
 
-    fetchData();
+    fetchData(partyIDParam, sessionIDParam);
 
     // Match listener
     const updateBusinessMatch = (businessMatchData) => {
@@ -83,14 +68,48 @@ const Swipe = () => {
 
     const unsubscribeEliminationCount = listenToEliminationCount(partyIDParam, updateEliminationCount);
 
+    // Card view count listener
+    const updateViewCount = (viewCountData) => {
+      setViewCount(viewCountData || 0);
+    };
+
+    const unsubscribeViewCount = listenToViewCount(partyIDParam, sessionIDParam, updateViewCount);
+
+     // Try again trigger listener
+     const updateTryAgainTrigger = async () => {
+      fetchData(partyIDParam, sessionIDParam);
+      await writeData(`/${partyID}/tryAgainTrigger`, false);
+    };
+
+    const unsubscribeTryAgainTrigger = listenToTryAgainTrigger(partyIDParam, updateTryAgainTrigger);
+
     // Cleanup listeners on component unmount
     return () => {
       unsubscribeBusinessMatch();
       unsubscribeEliminationCount();
+      unsubscribeViewCount();
+      unsubscribeTryAgainTrigger();
     };
 
     
   }, []);
+
+  async function fetchData(partyID, sessionID) {
+    try {
+      console.log('FETCHING DATA');
+      const partyRef = await readData(`/${partyID}`);
+      setLocation(partyRef.location);
+      setBusinessMatch(partyRef.businessMatch);
+      setEliminationCount(partyRef.eliminationCount);
+      setNumCards(partyRef.businesses.length);
+      console.log(partyRef.businesses.length);
+      setCurrBusiness(await getNextBusiness(partyID, sessionID));
+
+    } catch (err) {
+      console.error(err);
+     // setError('Failed to fetch data');
+    }
+};
 
 /**
  * Returns a random business that is not eliminated or viewed yet by the given member
@@ -102,15 +121,17 @@ async function getNextBusiness(partyID, sessionID) {
   const party = await readData(`/${partyID}`);
   const businesses = party.businesses;
   const viewedBusinesses = party.members[sessionID].viewed;
-  const numViewed = Object.keys(viewedBusinesses).length;
- // setNumCardsViewed(numViewed);
+  const updatedViewCount = Object.keys(viewedBusinesses).length;
+
+  console.log("Viewed " + updatedViewCount + "/" + numCards);
+
+ 
 
   // Return if no cards left
-  console.log(numViewed + " cards viewed");
-  if (numViewed == businesses.length || eliminationCount == businesses.length) {
+  if (updatedViewCount == numCards || eliminationCount == numCards) {
    // console.log(numViewed + "/" + businesses.length);
-    //console.log('No cards left');
-    setNoCardsLeft(true);
+    console.log('No cards left');
+   // setNoCardsLeft(true);
     return null;
   }
   
@@ -135,6 +156,8 @@ async function getNextBusiness(partyID, sessionID) {
   async function handleNoClick() {
     try {
       await setMatch(partyID, sessionID, currBusiness, false);
+
+      if (eliminationCount < numCards) 
       setCurrBusiness(await getNextBusiness(partyID, sessionID));
     } catch (err) {
       console.log(err);
@@ -148,7 +171,7 @@ async function getNextBusiness(partyID, sessionID) {
       await setMatch(partyID, sessionID, currBusiness, true);
       const businessMatch = await readData(`/${partyID}/businessMatch`);
       if (!businessMatch) {
-        console.log('Not a match, getting next business...');
+        if (eliminationCount < numCards) 
         setCurrBusiness(await getNextBusiness(partyID, sessionID));
       }
     } catch (err) {
@@ -178,17 +201,17 @@ async function getNextBusiness(partyID, sessionID) {
    router.push('/');
   }
 
+  // DEBUG only resets for clicker
   async function handleTryAgain() {
     try {
      // Reset matches
      await resetMatches(partyID);
-     setBusinessMatch(null);
-     setEliminationCount(0);
-     setNoCardsLeft(false);
-     setCurrBusiness(await getNextBusiness(partyID, sessionID));
-   
-     // setNumCardsViewed(0);
 
+     // Trigger a data refresh for everyone
+     await writeData(`/${partyID}/tryAgainTrigger`, true);
+     //await fetchData(partyID, sessionID);
+   
+      console.log('RESTARTING');
     } catch (err) {
       console.error(err);
       setError('Failed to reset cards, try again');
@@ -238,7 +261,7 @@ async function getNextBusiness(partyID, sessionID) {
           </div>
       </div>
       <div className="w-full flex flex-col grow justify-center gap-4">
-        {!noCardsLeft ? (
+        {viewCount < numCards ? (
           <>
             {/* Card */}
             <BusinessCard business={currBusiness} location={location} />
