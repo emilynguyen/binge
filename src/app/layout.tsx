@@ -7,14 +7,13 @@ import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import { HeaderVisibilityProvider } from '@/contexts/HeaderVisibilityContext';
 
-import localFont from 'next/font/local';
-
 /*
+import localFont from 'next/font/local';
 
 const basis = localFont({
   src: [
     {
-      path: './font/basis.woff2',
+      path: '/font/gt-alpina-standard-regular-italic.woff2',
       weight: '400',
       style: 'normal',
     },
@@ -25,8 +24,8 @@ const basis = localFont({
     }
   ],
 })
-
 */
+
 
 
 // import { motion } from "framer-motion";

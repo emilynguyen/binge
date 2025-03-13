@@ -10,7 +10,7 @@ const Button = ({ text, icon, alt, onClick, className, arrow }) => {
       className={`${className} flex items-center justify-center w-[4.5rem] h-[4.5rem] p-0`}
       onClick={onClick ? onClick : undefined} 
     >
-      <Image src={arrowIcon} alt="Arrow" width="48" height="48"/>
+      <Image src={arrowIcon} alt="Arrow" width="40" height="40"/>
     </button>
     );
   }

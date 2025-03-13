@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @font-face {
   font-family: 'Basis Grotesque Mono Pro';
   src: url('/font/Basis-Grotesque-Mono-Pro-Regular.woff2') format('woff2');
@@ -18,7 +19,7 @@
 
 @font-face {
   font-family: 'GT Alpina';
-  src: url('/font/GT-Alpina-Standard-Regular-Italic.woff2') format('woff2');
+  src: url('/font/gt-alpina-standard-regular-italic.woff2') format('woff2');
   font-weight: normal;
   font-style: italic;
 }
@@ -168,7 +169,7 @@ h1 {
 
 h2 {
   font-size: 2rem; /* 32 */
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
   font-weight: bold;
   line-height: 2.2rem;

@@ -98,6 +98,21 @@ const Swipe = () => {
   }, []);
 
 
+/**
+ * Returns a random business
+ * @param partyID 
+ * @param sessionID 
+ * @returns business obj
+ */
+async function getFirstBusiness(partyID, sessionID) {
+   const party = await readData(`/${partyID}`);
+   const businesses = party.businesses; 
+   
+  const randomIndex = Math.floor(Math.random() * businesses.length);
+  return businesses[randomIndex];
+
+ }
+
 
 /**
  * Returns a random business that is not eliminated or viewed yet by the given member
@@ -239,7 +254,7 @@ async function getNextBusiness(partyID, sessionID) {
               <Button className="secondary" alt="No" icon={xIcon} onClick={handleNoClick} />
               <Button className="primary" alt="Yes" icon={smileyCreamIcon} onClick={handleYesClick} />
             </div>
-          <Error error={error}/>
+          <Error error={error} mb="0"/>
       </div>
     </div>
   );
