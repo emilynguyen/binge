@@ -7,6 +7,27 @@ import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import { HeaderVisibilityProvider } from '@/contexts/HeaderVisibilityContext';
 
+import localFont from 'next/font/local';
+
+/*
+
+const basis = localFont({
+  src: [
+    {
+      path: './font/basis.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '/font/Basis-Grotesque-Mono-Pro-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    }
+  ],
+})
+
+*/
+
 
 // import { motion } from "framer-motion";
 

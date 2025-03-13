@@ -111,7 +111,7 @@ export default function Join() {
       </div>
       <div className='w-full'>
           <Button className="secondary w-full" text="Everyone is here"  onClick={handleStart}/>
-          <a className="cursor-pointer mt-10 inline-block" onClick={handleLeaveParty}>Leave party</a>
+          <a className="cursor-pointer mt-10 text-sm inline-block" onClick={handleLeaveParty}>Leave party</a>
           <p className="mt-6 h-[1rem] error">{error && error}</p>
       </div>
     </>

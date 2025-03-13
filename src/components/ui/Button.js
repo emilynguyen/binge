@@ -10,7 +10,7 @@ const Button = ({ text, icon, alt, onClick, className, arrow }) => {
       className={`${className} flex items-center justify-center w-[4.5rem] h-[4.5rem] p-0`}
       onClick={onClick ? onClick : undefined} 
     >
-      <Image src={arrowIcon} alt="Arrow" width="40" height="40"/>
+      <Image src={arrowIcon} alt="Arrow" width="48" height="48"/>
     </button>
     );
   }
@@ -21,7 +21,7 @@ const Button = ({ text, icon, alt, onClick, className, arrow }) => {
       onClick={onClick ? onClick : undefined}
     >
       {icon && <Image src={icon} alt={alt || 'icon'} className="inline-block" width="40" height="40" />}
-      {text && <span className={`inline-block ${icon ? 'ml-2' : ''}`}>{text}</span>}
+      {text && <span className={`inline-block ${icon ? 'ml-2 mr-2' : ''}`}>{text}</span>}
     </button>
   );
 };

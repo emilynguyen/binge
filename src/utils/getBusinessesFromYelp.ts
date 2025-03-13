@@ -21,7 +21,7 @@ async function getBusinessesFromYelp(location, num) {
       return response.data.businesses;
     } catch (err) {
       console.error('Error fetching businesses:', err);
-      return [];
+      return null;
     }
   }
 
@@ -43,7 +43,7 @@ async function getBusinessesFromYelp(location, num) {
     return restaurants;
   } catch (error) {
     console.error('Error fetching businesses:', error);
-    return [];
+    return null;
   }
 }
 

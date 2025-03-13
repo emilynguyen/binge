@@ -7,20 +7,22 @@ import { useHeaderVisibility } from '@/contexts/HeaderVisibilityContext';
 
 
 
-const Header = ({ left="", right="" }) => {
+const Header = ({}) => {
   const { isHeaderVisible } = useHeaderVisibility();
 
   const hidden = !isHeaderVisible ? "invisible" : "";
 
-
+  return (<></>);
+/*
   return (
     <header className={`top-6 text-xs flex justify-between ${hidden}`}>
         <div>{left}</div>
         <Image src={logo} width="61" height="20" alt="Binge"/>
         <div>{right}</div>
     </header>
-  );
+  ); */
 };
+
 
 export default Header;
 

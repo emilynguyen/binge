@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Error = ({ error }) => {
+const Error = ({ error, mb="6", mt="6" }) => {
   return (
-    <p className="mt-6 mb-6 error">{error && error}</p>
+    <p className={`error mt-${mt} mb-${mb}`}>{error && error}</p>
   );
 };
 

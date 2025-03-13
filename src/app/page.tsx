@@ -7,6 +7,8 @@ import Form from 'next/form'
 import CleanupExpiredItems from '@/components/CleanupExpiredItems';
 import Error from '@/components/ui/Error';
 import Button from '@/components/ui/Button';
+import Intro from '@/components/ui/Intro';
+
 import { useHeaderVisibility } from '@/contexts/HeaderVisibilityContext';
 
 // import { motion } from "framer-motion";
@@ -17,8 +19,7 @@ import Image from "next/image";
 import { readData } from '@/utils/firebaseUtils';
 import createParty from '@/utils/createParty';
 
-const logo = "/brand/binge_logo.svg";
-const credit = "/brand/binge_credit.svg";
+
 const locationIcon = "/icons/location_32x32.svg";
 
 
@@ -124,10 +125,15 @@ function Home() {
       try {
         // Create party (createParty also creates first member)
         const generatedPartyID = await createParty(location);
+        if (generatedPartyID) {
         router.push(`/join?party=${generatedPartyID}`);
+        } else {
+          throw (err);
+        }
 
       } catch (err) {
         setCreateButtonDisabled(false)
+        setCreateButtonText("Create a party");
         setLocationError('Error creating party, please try again');
         console.log(err);
       }
@@ -183,19 +189,7 @@ function Home() {
 
   if (showIntro) {
     return(
-  
-      <>
-        <div className="bg-cream h-16 w-full absolute top-0">&nbsp;</div>
-        <div className="bg-cream h-16 w-full absolute bottom-0">&nbsp;</div>
-        <Image className="mb-6" src={logo} width="196" height="64" alt="Binge"/>
-        <p className="max-w-xs">Swipe through restaurants until there’s a match — no chit-chat, no negotiation.</p>
-        <Button className="secondary mb-16 mt-16" arrow={true} onClick={handleCloseIntro}/>
-        <a href="http://emilynguyen.co/" target="_blank">
-          <Image src={credit} width="89" height="77" alt="Made with <3 by Emily"/>
-        </a>
-    
-      </>
-      
+      <Intro handleCloseIntro={handleCloseIntro} />  
     );
   }
 
@@ -210,7 +204,8 @@ function Home() {
           placeholder="Your location"
           type="text"
           onChange={handleLocationInputChange}
-          required
+          required 
+          disabled={loadingCurrLocation}
         />
         <button className="icon bg-cream absolute right-3 top-[.8rem]" onClick={handleGetLocation}>
                     <Image
@@ -221,12 +216,12 @@ function Home() {
                     />
                   </button>
                   </div>
-        <button className="primary mb-4" type="submit" name="createParty" disabled={loadingCurrLocation || createButtonDisabled}>{createButtonText}</button>
+        <button className="primary" type="submit" name="createParty" disabled={loadingCurrLocation || createButtonDisabled}>{createButtonText}</button>
         {/*
         <button className="secondary hidden" type="submit" name="partyOfOne" disabled={loadingCurrLocation}>Dine alone</button> */}
       </Form>
-      <Error error={locationError} />
-      <p className="text-sm mb-14">or</p>
+      <Error error={locationError} mb="0"/>
+      <p className="text-sm mb-14 mt-12">or</p>
       <Form onSubmit={handleJoin} onChange={() => {setJoinError(null)}} className="w-full">
         <input
           name="partyID"
@@ -235,7 +230,7 @@ function Home() {
           type="text"
           required
         />
-        <button className="secondary mb-4" type="submit" name="joinParty">Join a party</button>
+        <button className="secondary" type="submit" name="joinParty">Join a party</button>
       </Form>
       <Error error={joinError} />
     </>

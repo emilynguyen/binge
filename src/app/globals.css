@@ -27,16 +27,18 @@
 :root {
   --black: #000000;
   --cream: #F8F4F0;
+  --cream: #F2EADF;
   --cream-70: rgb(248,244,240, .7);
+  --cream-70: rgb(242,234,223, .6);
   --green: #C9FF77;
   --red: #EB3700;
-  --red-12: rgb(235,55,0, .12);
+  --red-10: rgb(235,55,0, .10);
+  --red-20: rgb(235,55,0, .2);
+  --red-40: rgb(235,55,0, .4);
   --red-70: rgb(235,55,0, .7);
 
-
-
   --primary-color: var(--red);
-  --secondary-color: var(--red-12);
+  --secondary-color: var(--red-10);
   --primary-typeface: "Basis Grotesque Mono Pro", monospace;
   --display-typeface: "GT Alpina", serif;
 }
@@ -189,27 +191,43 @@ p {
 }
 
 input {
+  /*
+  all: unset; */
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: all 5000s ease-in-out 0s;
+}
+
+input {
   height: 4.5rem;
   /*
   border-radius: .5rem; */
   width: 100%;
   padding: 0 1.5rem;
-  /*
-  border: 1px var(--primary-color) dotted; */
+  
   border: none;
+  
+  border: 1px var(--red-20) solid; 
+  border-radius: 8px;
   background-color: transparent;
   text-align: center;
   text-overflow: ellipsis;
-  transition: all 5000s;
-  /* https://kovart.github.io/dashed-border-generator/ */
+  /*
+  transition: background-color 5000s; */
+  /* https://kovart.github.io/dashed-border-generator/ 
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23EB3700FF' stroke-width='2' stroke-dasharray='2%2c 4' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
-  border-radius: 8px;
+ 
+  */
 }
 
 input:focus {
   outline: none;
-  border: 1px var(--primary-color) solid; 
   background-image: none;
+  border-color: var(--red-40);
 }
 
 /*

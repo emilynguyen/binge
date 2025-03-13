@@ -14,6 +14,11 @@ async function createParty(location) {
     try {        
         // Generate unique party ID
         const partyID = await generateUniquePartyID();
+        const businesses = await getBusinessesFromYelp(location, 20);
+
+        if (!businesses) {
+            throw "Yelped returned no businesses";
+        }
 
         // Add party to db
         await writeData(partyID, { 
@@ -23,9 +28,10 @@ async function createParty(location) {
             'members' : [],
             'eliminationCount' : 0,
             'businessMatch': null,
-            'businesses' : await getBusinessesFromYelp(location, 20)
+            'businesses' : businesses
         });
         console.log("Created new party: " + partyID);
+        
         
         // Add party creator as first member
         await axios.post('/api/create-member', { partyID: partyID });
@@ -35,7 +41,7 @@ async function createParty(location) {
     } catch {
         console.log("Error creating party");
         return null;
-    }
+    } 
 }
 
 export default createParty;
