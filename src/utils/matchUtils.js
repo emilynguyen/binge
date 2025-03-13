@@ -31,6 +31,7 @@ async function checkPartyMatch(partyID, businessRef, businessIndex) {
  * @param {*} decision boolean
  */
 async function setMatch(partyID, sessionID, businessRef, decision) {
+    console.log(businessRef);
     try {
         const partyRef = await readData(`/${partyID}`);
         const businessIndex = partyRef.businesses.findIndex(business => business.id == businessRef.id

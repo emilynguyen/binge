@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'
 import axios from 'axios';
+import Image from "next/image";
 
 
 import BusinessCard from '@/components/ui/BusinessCard';
@@ -13,9 +14,14 @@ import { setMatch, resetMatches } from '@/utils/matchUtils';
 
 
 const xIcon = "/icons/x_40x40.svg";
-const smileyIcon = "/icons/smiley_40x40.svg";
-const yelpIcon = "/icons/yelp_40x40.svg";
-const mapsIcon = "/icons/google-maps_40x40.svg";
+const smileyRedIcon = "/icons/smiley_red_40x40.svg";
+const sadIcon = "/icons/sad_red_40x40.svg";
+const eyesIcon = "/icons/eyes_40x40.svg";
+const smileyCreamIcon = "/icons/smiley_cream_40x40.svg";
+const yelpIcon = "/icons/yelp_red_40x40.svg";
+const mapsIcon = "/icons/google-maps_red_40x40.svg";
+const restaurantIcon = "/icons/restaurant_20x20.svg";
+
 
 
 
@@ -40,6 +46,7 @@ const Swipe = () => {
   const [error, setError] = useState(false);
 
   const fetchData = async (partyIDParam, sessionIDParam) => {
+    
     try {
       //console.log('FETCHING DATA');
       const partyRef = await readData(`/${partyIDParam}`);
@@ -213,15 +220,18 @@ async function getNextBusiness(partyID, sessionID) {
  if (businessMatch) {
   return (
     <>
-      <h1>
-        <span className="italic">{businessMatch.name}</span> is a match!
-      </h1>
-      
+    <div>
+      <h1 className="serif inline">{businessMatch.name}</h1>
+      <h1 className="inline"> is a match!</h1>
+    </div>
+    <Image src={smileyRedIcon} className="mt-8 mb-8" width='80' height='80'alt="Smiley face" />
       <div>
-        <Button className="mb-4 secondary" text="View on Yelp" icon={yelpIcon} onClick={handleYelpClick}/>
-        <Button className="mb-4 secondary" text="Open in Google Maps" icon={mapsIcon} onClick={handleGoogleMapsClick}/>
-        <Button className="tertiary" text="Try again" onClick={handleTryAgain}/>
-        <a className="cursor-pointer mt-16 inline-block" onClick={handleLeaveParty}>Leave party</a>
+        <Button className="mb-4 tertiary" text="View on Yelp" icon={yelpIcon} onClick={handleYelpClick}/>
+        <Button className="mb-4 tertiary" text="Open in Google Maps" icon={mapsIcon} onClick={handleGoogleMapsClick}/>
+        <div className="mt-12 text-sm">
+          <a className="cursor-pointer" onClick={handleTryAgain}>Try again</a> /&nbsp;
+          <a className="cursor-pointer" onClick={handleLeaveParty}>leave party</a>
+        </div>
       </div>
     </>
   );
@@ -230,34 +240,42 @@ async function getNextBusiness(partyID, sessionID) {
  if (numCards && eliminationCount >= numCards) {
   return (
     <>
+    {/* 
+    {numCards} && {eliminationCount} >= {numCards} */}
     <h1>
-      No match found :(
+      No matches<br></br>made
     </h1>
-    
+    <Image src={sadIcon} className="mt-8 mb-8" width='80' height='80'alt="Sad face" />
     <div>
       <Button className="secondary" text="Try again" onClick={handleTryAgain}/>
-      <a className="cursor-pointer mt-16 inline-block" onClick={handleLeaveParty}>Leave party</a>
+      <a className="cursor-pointer text-sm mt-12 inline-block" onClick={handleLeaveParty}>Leave party</a>
     </div>  
-    <p className="mt-6 h-[1rem] error">{error && error}</p>
   </>
   );
  }
 
   return (
     <>
-      <div className="w-full">
+    
+      <div className="w-full absolute box-border top-6 pr-6 pl-6 max-w-md text-xs">
           <div className="flex justify-between flex-row">
-            <p>{numCards - eliminationCount} cards left</p>
-            <p>{viewCount}/{numCards} viewed</p>
+            <div className="flex items-center gap-2">
+              <Image src={restaurantIcon} width='20' height='20'alt="Cards left: " />
+              <p>{numCards - eliminationCount}</p>
+            </div>
             <p><a className="cursor-pointer inline-block" onClick={handleLeaveParty}>Leave party</a></p>
           </div>
+    
       </div>
       <div className="w-full flex flex-col grow justify-center gap-4">
         {(numCards && viewCount == numCards) ? 
         (
           <div>
-            <h1>No cards left</h1>
-            <div className="mt-8 mb-6">Waiting for a match...</div>
+            {/* 
+            {numCards} && {viewCount} == {numCards} ? */}
+            <h1>You have no<br></br>more cards</h1>
+            <Image src={eyesIcon} className="mt-8 mb-8 inline-block" width='80' height='80'alt="Eyes emoji" />
+            <div className="mt-2 mb-6 text-sm">Waiting for a match...</div>
           </div>
         ) : (
           <>
@@ -266,7 +284,7 @@ async function getNextBusiness(partyID, sessionID) {
             {/* Buttons */}
             <div className="flex w-full gap-4">
               <Button className="secondary" alt="No" icon={xIcon} onClick={handleNoClick} />
-              <Button className="primary" alt="Yes" icon={smileyIcon} onClick={handleYesClick} />
+              <Button className="primary" alt="Yes" icon={smileyCreamIcon} onClick={handleYesClick} />
             </div>
           </>
         )}

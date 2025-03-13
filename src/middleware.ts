@@ -26,42 +26,6 @@ async function isPartyStarted(partyID) {
   }
 }
 
-// Check that member is in the given party
-/*
-async function isAuthenticated(sessionID, partyID) {
-    try {
-      // Return false if party or user does not exist
-      const party = await readData(`/${partyID}`);
-      if (!sessionID || !party) return false;
-  
-      // Check that user is part of this party
-      const memberExists = party.members.some(member => member.id === sessionID);
-
-      return memberExists;
-    } catch {
-      console.error('Error authenticating user');
-      return false;
-    }
-
-}
-*/
-
-async function handleCreate(req) {
-  // Check /create for location
-  const url = new URL(req.url);
-  const location = url.searchParams.get('location');
-
-  // Redirect if no partyID
-  if (!location) {
-    console.log('No location passed to /create');
-    return NextResponse.redirect(new URL('/', req.url));
-  }
-
-  return NextResponse.next();
-}
-
-
-
 
 async function handleJoin(req) {
     // If no cookies, redirect home
@@ -267,9 +231,11 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
+
+  /*
   if (pathname.startsWith('/create')) {
     return handleCreate(req);
-  }
+  }*/
 
   return NextResponse.redirect(new URL('/', req.url));
 

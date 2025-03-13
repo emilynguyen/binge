@@ -2,10 +2,16 @@
 
 import axios from 'axios';
 import Button from "@/components/ui/Button";
-import Header from "@/components/layout/Header";
+import Image from "next/image";
+
 import { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
 import { listenToMembers, listenToStart, writeData } from '@/utils/firebaseUtils';
+
+const copyIcon = "/icons/copy_32x32.svg";
+const copySuccessIcon = "/icons/copy_success_32x32.svg";
+
+
 
 
 export default function Join() {
@@ -13,6 +19,8 @@ export default function Join() {
     const [memberCount, setMemberCount] = useState("...");
     const [isStarted, setIsStarted] = useState(false);
     const [error, setError] = useState("");
+    const [currentCopyIcon, setCopyIcon] = useState(copyIcon);
+    
     const router = useRouter();
     
     
@@ -43,11 +51,19 @@ export default function Join() {
   }, []);
 
 
+
   useEffect(() => {
     if (isStarted) {
         router.push(`/swipe?party=${partyID}`);
     }
   }, [isStarted]);
+
+  function handleCopyCode(partyID) {
+    navigator.clipboard.writeText(partyID);
+    if (currentCopyIcon !== copySuccessIcon) {
+      setCopyIcon(copySuccessIcon);
+    }
+  }
 
 
   async function handleLeaveParty() {
@@ -76,20 +92,27 @@ export default function Join() {
 
   return (
     <>
-      <Header text={<i>Waiting for your whole party...</i>} />
-      <div className="grow flex flex-col w-full">
-        <div>
-          <span className="border rounded-[50%] mt-4 pr-6 pl-6 pt-[.2rem] pb-[.2rem] tracking-wider inline-block mb-auto self-auto">{partyID}</span>
-         </div>
-      
-        <div className="w-full grow relative flex flex-col justify-center pt-20 mb-16">
-            <div>
-            <h1 className="mb-16">This is currently<br></br>a party of ({memberCount})</h1>
-            <Button className="primary w-full" text="Everyone is here"  onClick={handleStart}/>
-            <a className="cursor-pointer mt-16 inline-block" onClick={handleLeaveParty}>Leave party</a>
-            <p className="mt-6 h-[1rem] error">{error && error}</p>
-            </div>
-        </div>
+      <div className="dotted-underline pb-2 mb-10">
+        <p className="text-xs mb-4">Party code</p>
+        <div className="flex gap-3 items-center justify-center mb-2">
+          <h2>{partyID}</h2>
+          <button className="icon inline-block" onClick={() => handleCopyCode(partyID)}>
+            <Image
+              src={currentCopyIcon}
+              width="32"
+              height="32"
+              alt="Copy code"
+            />
+          </button></div>
+      </div>
+      <div className="dotted-underline mb-20">
+        <p className="text-xs mb-[-.5rem]">No. in party</p>
+        <p className="display">({memberCount})</p>
+      </div>
+      <div className='w-full'>
+          <Button className="secondary w-full" text="Everyone is here"  onClick={handleStart}/>
+          <a className="cursor-pointer mt-10 inline-block" onClick={handleLeaveParty}>Leave party</a>
+          <p className="mt-6 h-[1rem] error">{error && error}</p>
       </div>
     </>
   );

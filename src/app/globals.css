@@ -2,40 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --black: #000000;
-  --cream: #ECE5DD;
-  --cream-10: rgba(236, 229, 221, .1);
-  --cream-30: rgba(236, 229, 221, .3);
-  --cream-50: rgba(236, 229, 221, .5);
-  --green: #C9FF77;
-  --red: #E54125;
-
-  --accent: var(--green);
-  --primary-typeface: "Instrument Serif";
-  --secondary-typeface: "DM Mono";
+@font-face {
+  font-family: 'Basis Grotesque Mono Pro';
+  src: url('/font/Basis-Grotesque-Mono-Pro-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
 }
 
+@font-face {
+  font-family: 'Basis Grotesque Mono Pro';
+  src: url('/font/Basis-Grotesque-Mono-Pro-Medium.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GT Alpina';
+  src: url('/font/GT-Alpina-Standard-Regular-Italic.woff2') format('woff2');
+  font-weight: normal;
+  font-style: italic;
+}
+
+
+:root {
+  --black: #000000;
+  --cream: #F8F4F0;
+  --cream-70: rgb(248,244,240, .7);
+  --green: #C9FF77;
+  --red: #EB3700;
+  --red-12: rgb(235,55,0, .12);
+  --red-70: rgb(235,55,0, .7);
+
+
+
+  --primary-color: var(--red);
+  --secondary-color: var(--red-12);
+  --primary-typeface: "Basis Grotesque Mono Pro", monospace;
+  --display-typeface: "GT Alpina", serif;
+}
+
+.text-cream {
+  color: var(--cream);
+}
+
+.bg-cream {
+  background-color: var(--cream);
+}
+/*
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
 }
+*/
 
 html {
   height: 100%;
+}
+
+html, body {
+  overflow-x: hidden;
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  color: var(--cream);
-  background: var(--black);
+  color: var(--primary-color);
+  background: var(--cream);
   font-size: 1rem;
   text-underline-offset: 24%;
+  font-family: var(--primary-typeface);
 }
+
 
 
 main {
@@ -51,28 +91,41 @@ button {
   height: 4.5rem;
   border-radius: 4.5rem;
   padding: 0 2.5rem;
-  width: 100%;
   transition: all 100ms;
+  font-weight: bold;
+  display: block;
+  width: 100%;
+}
+
+button:disabled, button[disabled] {
+  color: var(--cream-70) !important;
 }
 
 button.primary {
-  background-color: var(--accent);
-  color: var(--black);
+  background-color: var(--primary-color);
+  color: var(--cream);
 }
 
 button.secondary {
-  background-color: var(--cream-30);
-  color: var(--cream);
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
 }
 
 button.tertiary {
-  border: 1px solid var(--cream);
-  color: var(--cream);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
 }
 
 button.icon {
-  width: auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 0;
+  border-radius: 0;
+  height: 2.75rem;
+  width: 2.75rem;
+  transition: all 200ms;
 }
 
 @media (hover: hover) {
@@ -80,23 +133,43 @@ button.icon {
     opacity: 1;
     border-radius: .5rem;
   }
+  button.icon:hover {
+    transform: scale(1.1);
+  }
+  a:hover {
+    text-decoration: none;
+  }
+}
+
+.display {
+  font-size: 7.5rem;
+  font-weight: bold;
+  letter-spacing: -0.04em;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--primary-typeface);
   line-height: 100%;
 }
 
+h1.serif, h2.serif {
+  font-family: var(--display-typeface);
+  text-transform: none;
+  font-weight: normal;
+  letter-spacing: -.01em;
+}
+
 h1 {
-  font-size: 3.5rem; /* 56 */
+  font-size: 3rem; /* 48 */
+  letter-spacing: -.06em;
+  line-height: 1.1;
 }
 
 h2 {
-  font-size: 2.5rem; /* 40 */
-}
-
-h3 {
-  font-size: 1.5rem; /* 24 */
+  font-size: 2rem; /* 32 */
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  font-weight: bold;
+  line-height: 2.2rem;
 }
 
 h5 {
@@ -104,28 +177,39 @@ h5 {
 }
 
 p {
-  font-size: .74rem;
+  line-height: 150%;
 }
 
+
+
 .error {
-  color: var(--cream-50);
+  color: var(--red-70);
+  font-size: 0.875rem;
+  text-transform: uppercase;
 }
 
 input {
   height: 4.5rem;
-  border-radius: .5rem;
+  /*
+  border-radius: .5rem; */
   width: 100%;
   padding: 0 1.5rem;
-  border: 1px var(--cream-30) solid;
+  /*
+  border: 1px var(--primary-color) dotted; */
+  border: none;
   background-color: transparent;
   text-align: center;
   text-overflow: ellipsis;
   transition: all 5000s;
+  /* https://kovart.github.io/dashed-border-generator/ */
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23EB3700FF' stroke-width='2' stroke-dasharray='2%2c 4' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
+  border-radius: 8px;
 }
 
 input:focus {
   outline: none;
-  border-color: var(--cream);
+  border: 1px var(--primary-color) solid; 
+  background-image: none;
 }
 
 /*
@@ -139,19 +223,29 @@ input:autofill, input:-webkit-autofill::first-line {
 input[readOnly] {
   cursor: default;
   pointer-events: none;
-  background-color: var(--cream-10);
+  /* background-color: var(--cream-10); */
   /*text-align: left; */
 }
 
 ::placeholder {
-  color: var(--cream-50) !important;
+ color: var(--red-70) !important;
   opacity: 1; /* Firefox */
 }
 
 footer {
-  color: var(--cream-50);
+  /*
+  color: var(--red-70); */
 }
 
 a {
   text-decoration: underline;
+}
+
+
+.dotted-underline {
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='2' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='20' fill='none' stroke='%23EB3700FF' stroke-width='2' stroke-dasharray='2%2c 4' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 100% 1px; /* Adjust the height of the border */
+  padding-bottom: 0px; /* Add padding to ensure the border doesn't overlap with the text */
 }

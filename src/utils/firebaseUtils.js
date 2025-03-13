@@ -17,11 +17,11 @@ export const readData = async (path) => {
     if (snapshot.exists()) {
       return snapshot.val();
     } else {
-      console.log("No data available");
+      console.log(`Error reading data at ${path}`);
       return null;
     }
   } catch (error) {
-    console.error("Error reading data: ", error);
+    console.error(`Error reading data at ${path}`, error);
     return null;
   }
 };
