@@ -21,7 +21,7 @@ const Button = ({ text, icon, alt, onClick, className, arrow }) => {
       onClick={onClick ? onClick : undefined}
     >
       {icon && <Image src={icon} alt={alt || 'icon'} className="inline-block" width="40" height="40" />}
-      {text && <span className="inline-block ml-2">{text}</span>}
+      {text && <span className={`inline-block ${icon ? 'ml-2' : ''}`}>{text}</span>}
     </button>
   );
 };

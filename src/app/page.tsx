@@ -19,6 +19,8 @@ import createParty from '@/utils/createParty';
 
 const logo = "/brand/binge_logo.svg";
 const credit = "/brand/binge_credit.svg";
+const locationIcon = "/icons/location_32x32.svg";
+
 
 
 
@@ -53,7 +55,8 @@ function Home() {
    /*
    * On focus of location input, get user's location
    */
-   const handleLocationOnFocus = async () => {
+   const handleGetLocation = async (e) => {
+    e.preventDefault();
     // Only retrive current location once so user can overwrite
     if (currLocationLoaded) return;
     
@@ -200,16 +203,24 @@ function Home() {
     <>
       <CleanupExpiredItems />
       <Form onSubmit={handleCreate} className="w-full">
-        <input
+        <div className="relative mb-4 items-center justify-center">
+        <input className="pr-8"
           name="location"
           value={locationInput}
-          className="mb-4"
           placeholder="Your location"
           type="text"
-          onFocus={handleLocationOnFocus}
           onChange={handleLocationInputChange}
           required
         />
+        <button className="icon bg-cream absolute right-3 top-[.8rem]" onClick={handleGetLocation}>
+                    <Image
+                      src={locationIcon}
+                      width="32"
+                      height="32"
+                      alt="Get current location"
+                    />
+                  </button>
+                  </div>
         <button className="primary mb-4" type="submit" name="createParty" disabled={loadingCurrLocation || createButtonDisabled}>{createButtonText}</button>
         {/*
         <button className="secondary hidden" type="submit" name="partyOfOne" disabled={loadingCurrLocation}>Dine alone</button> */}

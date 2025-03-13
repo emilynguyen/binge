@@ -92,7 +92,7 @@ export default function Join() {
 
   return (
     <>
-      <div className="dotted-underline pb-2 mb-10">
+      <div className="dotted-underline mb-14">
         <p className="text-xs mb-4">Party code</p>
         <div className="flex gap-3 items-center justify-center mb-2">
           <h2>{partyID}</h2>
@@ -105,9 +105,9 @@ export default function Join() {
             />
           </button></div>
       </div>
-      <div className="dotted-underline mb-20">
+      <div className="dotted-underline mb-16">
         <p className="text-xs mb-[-.5rem]">No. in party</p>
-        <p className="display">({memberCount})</p>
+        <p className="display mb-[-.8rem]">({memberCount})</p>
       </div>
       <div className='w-full'>
           <Button className="secondary w-full" text="Everyone is here"  onClick={handleStart}/>

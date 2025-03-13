@@ -3,26 +3,23 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'
 import axios from 'axios';
-import Image from "next/image";
 
 
 import BusinessCard from '@/components/ui/BusinessCard';
 import Button from '@/components/ui/Button';
+import Error from '@/components/ui/Error';
+import SwipeHeader from '@/components/ui/SwipeHeader';
+import NoMatch from '@/components/ui/NoMatch';
+import YesMatch from '@/components/ui/YesMatch';
+import NoMoreCards from '@/components/ui/NoMoreCards';
+
 
 import { listenToBusinessMatch, listenToEliminationCount, readData } from '@/utils/firebaseUtils';
 import { setMatch, resetMatches } from '@/utils/matchUtils';
 
 
 const xIcon = "/icons/x_40x40.svg";
-const smileyRedIcon = "/icons/smiley_red_40x40.svg";
-const sadIcon = "/icons/sad_red_40x40.svg";
-const eyesIcon = "/icons/eyes_40x40.svg";
 const smileyCreamIcon = "/icons/smiley_cream_40x40.svg";
-const yelpIcon = "/icons/yelp_red_40x40.svg";
-const mapsIcon = "/icons/google-maps_red_40x40.svg";
-const restaurantIcon = "/icons/restaurant_20x20.svg";
-
-
 
 
 
@@ -172,15 +169,7 @@ async function getNextBusiness(partyID, sessionID) {
     }
   }
 
-  const handleYelpClick = () => {
-    window.open(businessMatch.url, '_blank');
-  };
 
-  const handleGoogleMapsClick = () => {
-    const encodedAddress = encodeURIComponent(businessMatch.name);
-    const url = `http://maps.google.com/?q=${encodedAddress}`;
-    window.open(url, '_blank');
-  };
 
 
   async function handleLeaveParty() {
@@ -219,79 +208,40 @@ async function getNextBusiness(partyID, sessionID) {
 
  if (businessMatch) {
   return (
-    <>
-    <div>
-      <h1 className="serif inline">{businessMatch.name}</h1>
-      <h1 className="inline"> is a match!</h1>
-    </div>
-    <Image src={smileyRedIcon} className="mt-8 mb-8" width='80' height='80'alt="Smiley face" />
-      <div>
-        <Button className="mb-4 tertiary" text="View on Yelp" icon={yelpIcon} onClick={handleYelpClick}/>
-        <Button className="mb-4 tertiary" text="Open in Google Maps" icon={mapsIcon} onClick={handleGoogleMapsClick}/>
-        <div className="mt-12 text-sm">
-          <a className="cursor-pointer" onClick={handleTryAgain}>Try again</a> /&nbsp;
-          <a className="cursor-pointer" onClick={handleLeaveParty}>leave party</a>
-        </div>
-      </div>
-    </>
+    <YesMatch business={businessMatch} handleTryAgain={handleTryAgain} handleLeaveParty={handleLeaveParty}/>
   );
  }
 
  if (numCards && eliminationCount >= numCards) {
   return (
+   <NoMatch handleTryAgain={handleTryAgain} handleLeaveParty={handleLeaveParty}/>
+  );
+ }
+
+ if (numCards && viewCount == numCards) {
+  return (
     <>
-    {/* 
-    {numCards} && {eliminationCount} >= {numCards} */}
-    <h1>
-      No matches<br></br>made
-    </h1>
-    <Image src={sadIcon} className="mt-8 mb-8" width='80' height='80'alt="Sad face" />
-    <div>
-      <Button className="secondary" text="Try again" onClick={handleTryAgain}/>
-      <a className="cursor-pointer text-sm mt-12 inline-block" onClick={handleLeaveParty}>Leave party</a>
-    </div>  
-  </>
+    <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} handleLeaveParty={handleLeaveParty}/>
+    <NoMoreCards />
+    </>
   );
  }
 
   return (
-    <>
-    
-      <div className="w-full absolute box-border top-6 pr-6 pl-6 max-w-md text-xs">
-          <div className="flex justify-between flex-row">
-            <div className="flex items-center gap-2">
-              <Image src={restaurantIcon} width='20' height='20'alt="Cards left: " />
-              <p>{numCards - eliminationCount}</p>
-            </div>
-            <p><a className="cursor-pointer inline-block" onClick={handleLeaveParty}>Leave party</a></p>
-          </div>
-    
-      </div>
-      <div className="w-full flex flex-col grow justify-center gap-4">
-        {(numCards && viewCount == numCards) ? 
-        (
-          <div>
-            {/* 
-            {numCards} && {viewCount} == {numCards} ? */}
-            <h1>You have no<br></br>more cards</h1>
-            <Image src={eyesIcon} className="mt-8 mb-8 inline-block" width='80' height='80'alt="Eyes emoji" />
-            <div className="mt-2 mb-6 text-sm">Waiting for a match...</div>
-          </div>
-        ) : (
-          <>
+    <div className="w-full justify-cente">
+       <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} handleLeaveParty={handleLeaveParty}/>
+     
+      <div className="w-full h-full">
             {/* Card */}
             <BusinessCard business={currBusiness} location={location} />
             {/* Buttons */}
-            <div className="flex w-full gap-4">
+            <div className="flex w-full gap-4 mt-4">
               <Button className="secondary" alt="No" icon={xIcon} onClick={handleNoClick} />
               <Button className="primary" alt="Yes" icon={smileyCreamIcon} onClick={handleYesClick} />
             </div>
-          </>
-        )}
-
-         <p className="mt-2 h-[1rem] error">{error && error}</p>
+          <Error error={error}/>
       </div>
-    </>
+    </div>
   );
 };
 
