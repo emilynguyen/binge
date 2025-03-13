@@ -18,7 +18,7 @@ import { readData } from '@/utils/firebaseUtils';
 import createParty from '@/utils/createParty';
 
 const logo = "/brand/binge_logo.svg";
-const credit = "/brand/binge_Credit.svg";
+const credit = "/brand/binge_credit.svg";
 
 
 
@@ -188,7 +188,7 @@ function Home() {
         <p className="max-w-xs">Swipe through restaurants until there’s a match — no chit-chat, no negotiation.</p>
         <Button className="secondary mb-16 mt-16" arrow={true} onClick={handleCloseIntro}/>
         <a href="http://emilynguyen.co/" target="_blank">
-          <Image src={credit} width="89" height="77" alt="Binge"/>
+          <Image src={credit} width="89" height="77" alt="Made with <3 by Emily"/>
         </a>
     
       </>
