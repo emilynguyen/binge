@@ -48,7 +48,7 @@ const BusinessCard = ({ business, location }) => {
                 <p>
                     {closing && (
                         <>
-                            Closes at <span className="border rounded-[50%] pr-3 pl-3 pt-[.05rem] pb-[.05rem] tracking-wider">{closing}</span>
+                            Closes at <span className="border rounded-[50%] ml-1 pr-[.8rem] pl-[.8rem] pt-[.22rem] pb-[.15rem] tracking-wider">{closing}</span>
                         </>
                     )}
                 </p>

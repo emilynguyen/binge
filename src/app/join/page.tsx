@@ -95,7 +95,7 @@ export default function Join() {
       <div className="dotted-underline mb-14">
         <p className="text-xs mb-4">Party code</p>
         <div className="flex gap-3 items-center justify-center mb-2">
-          <h2>{partyID}</h2>
+          <h3>{partyID}</h3>
           <button className="icon inline-block" onClick={() => handleCopyCode(partyID)}>
             <Image
               src={currentCopyIcon}
