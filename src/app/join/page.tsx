@@ -99,8 +99,9 @@ export default function Join() {
           <button className="icon mb-1 copy inline-block" onClick={() => handleCopyCode(partyID)}>
             <Image
               src={currentCopyIcon}
-              width="32"
-              height="32"
+              width={32} 
+              height={32} 
+              style={{ width: '2rem' }}
               alt="Copy code"
             />
           </button></div>

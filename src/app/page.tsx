@@ -9,7 +9,6 @@ import Error from '@/components/ui/Error';
 import Button from '@/components/ui/Button';
 import Intro from '@/components/ui/Intro';
 
-import { useHeaderVisibility } from '@/contexts/HeaderVisibilityContext';
 
 // import { motion } from "framer-motion";
 
@@ -30,7 +29,7 @@ function Home() {
   const [locationError, setLocationError] = useState(null);
   const [joinError, setJoinError] = useState(null);
   const [showIntro, setShowIntro] = useState(false);
-  const [createButtonText, setCreateButtonText] = useState('Create a party');
+  const [createButtonText, setCreateButtonText] = useState('Create party');
   const [createButtonDisabled, setCreateButtonDisabled] = useState(false);
   const [locationInput, setLocationInput] = useState('');
   const [loadingCurrLocation, setLoadingCurrLocation] = useState(false);
@@ -40,13 +39,11 @@ function Home() {
 
   const [loading, setLoading] = useState(true);
 
-  const { setHeaderHidden, setHeaderVisible } = useHeaderVisibility();
 
 
   useEffect(() => {
     if (!sessionStorage.getItem("seenIntro")) {
       setShowIntro(true);
-      setHeaderHidden();
     }
 
     setLoading(false)
@@ -133,7 +130,7 @@ function Home() {
 
       } catch (err) {
         setCreateButtonDisabled(false)
-        setCreateButtonText("Create a party");
+        setCreateButtonText("Create party");
         setLocationError('Error creating party, please try again');
         console.log(err);
       }
@@ -176,7 +173,6 @@ function Home() {
     function handleCloseIntro() {
       setShowIntro(false);
       sessionStorage.setItem("seenIntro", true);
-      setHeaderVisible();
     }
 
     if (loading) {
@@ -187,15 +183,11 @@ function Home() {
       );
     }
 
-  if (showIntro) {
-    return(
-      <Intro handleCloseIntro={handleCloseIntro} />  
-    );
-  }
 
   return (
     <>
       <CleanupExpiredItems />
+      <Intro className={`fixed w-full z-10 h-screen bottom-0 lg:hidden ${showIntro ? "" : "hide"}`} handleCloseIntro={handleCloseIntro} /> 
       <Form onSubmit={handleCreate} className="w-full">
         <div className="relative mb-4 items-center justify-center">
         <input className="pr-8"
@@ -211,14 +203,13 @@ function Home() {
           <button className="icon location" onClick={handleGetLocation}>
                     <Image
                       src={locationIcon}
-                      width="32"
-                      height="32"
+                      width={32} height={32} style={{ width: '2rem' }}
                       alt="Get current location"
                     />
             </button>
         </div>
                   </div>
-        <button className="primary" type="submit" name="createParty" disabled={loadingCurrLocation || createButtonDisabled}>{createButtonText}</button>
+        <Button type="submit" className="primary" text={createButtonText} name="createParty" disabled={loadingCurrLocation || createButtonDisabled}/>
         {/*
         <button className="secondary hidden" type="submit" name="partyOfOne" disabled={loadingCurrLocation}>Dine alone</button> */}
       </Form>
@@ -232,7 +223,7 @@ function Home() {
           type="text"
           required
         />
-        <button className="secondary" type="submit" name="joinParty">Join a party</button>
+        <Button type="submit" className="secondary" text="Join party" name="joinParty"/>
       </Form>
       <Error error={joinError} />
     </>

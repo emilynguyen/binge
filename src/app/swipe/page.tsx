@@ -113,7 +113,7 @@ const Swipe = () => {
  * @param partyID 
  * @param sessionID 
  * @returns business obj
- */
+ 
 async function getFirstBusiness(partyID, sessionID) {
    const party = await readData(`/${partyID}`);
    const businesses = party.businesses; 
@@ -122,7 +122,7 @@ async function getFirstBusiness(partyID, sessionID) {
   return businesses[randomIndex];
 
  }
-
+*/
 
 /**
  * Returns a random business that is not eliminated or viewed yet by the given member

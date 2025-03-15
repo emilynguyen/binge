@@ -18,10 +18,10 @@ const YesMatch = ({ business, handleTryAgain }) => {
   return (
      <>
      <div>
-       <h1 className="inline">{business.name}</h1>
+       <h1 className="inline italic">{business.name}</h1>
        <h1 className="inline mono"> is a match!</h1>
      </div>
-     <Image src={smileyRedIcon} className="mt-10 mb-10" width='80' height='80'alt="Smiley face" />
+     <Image src={smileyRedIcon} className="mt-10 mb-10" width={80} height={80} style={{ width: '5rem' }} alt="Smiley face" />
        <div className="w-full">
          <Button className="mb-4 primary" text="View on Yelp" icon={yelpIcon} onClick={() => {handleYelpClick(business)}}/>
          <Button className="mb-4 primary" text="Open in Google Maps" icon={mapsIcon} onClick={() => {handleGoogleMapsClick(business)}}/>

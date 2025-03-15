@@ -20,7 +20,7 @@ const Star = ({ type }) => {
     default:
       return null;
   }
-  return <Image src={src} alt={`${type} star`} width={20} height={20} />;
+  return <Image src={src} alt={`${type} star`} width={20} height={20} style={{ width: '1.25rem' }}/>;
 };
 
 export default Star;

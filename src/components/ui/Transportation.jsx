@@ -76,7 +76,7 @@ const Transportation = ({ type, origin, destination }) => {
   return (
     <>
       <div className="flex flex-col items-center gap-1 w-[3rem]">
-        <Image src={src} alt={capitalize(type)} width={20} height={20} />
+        <Image src={src} alt={capitalize(type)} width={20} height={20} style={{ width: '1.25rem' }}/>
         {estimates && <p>{`${eta}`}</p>}
         {error && <p>{error}</p>}
       </div>

@@ -49,7 +49,11 @@
 
   --primary-typeface: "GT Alpina", serif;
   --secondary-typeface: "Basis Grotesque Mono Pro", monospace;
+  font-size: 16px;
+}
 
+@media (min-width: 1720px) {
+   :root { font-size: 1vw; } 
 }
 
 ::selection {
@@ -66,6 +70,10 @@
 
 .bg-cream {
   background-color: var(--cream);
+}
+
+.bg-red {
+  background-color: var(--red);
 }
 
 
@@ -153,7 +161,7 @@ button.icon {
 
 button.location {
   background-color: var(--white);
-  border: 1px solid var(--red);
+  border: 0.0625rem solid var(--red);
 }
 
 @media (hover: hover) {
@@ -181,7 +189,7 @@ h1, h2, h3 {
 }
 
 h1 {
-  font-size: 3rem; /* 48 */
+  font-size: 3.2rem; /* 48 */
   letter-spacing: -.01em;
   line-height: 1.1;
 }
@@ -191,6 +199,7 @@ h1.mono, h2.mono {
 }
 
 h1.mono {
+  font-size: 3rem; /* 48 */
   letter-spacing: -.06em;
 }
 
@@ -251,12 +260,20 @@ input:disabled, input:-moz-user-disabled {
 
 input:focus {
   outline: none;
-  border: 1px solid var(--black-30);
+  border: 0.0625rem solid var(--black-30);
 }
 
 ::placeholder {
  color: var(--black-50) !important;
   opacity: 1; /* Firefox */
+}
+
+.intro {
+  transition: all 300ms ease-in-out;
+}
+
+.intro.hide {
+  margin-left: -200vw;
 }
 
 footer {
@@ -270,5 +287,5 @@ a {
 
 
 .red-underline {
-  border-bottom: 1px solid var(--red-30);
+  border-bottom: 0.0625rem solid var(--red-30);
 }

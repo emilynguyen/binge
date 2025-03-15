@@ -22,7 +22,7 @@ const BusinessCard = ({ business, location }) => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 0 }} 
-    animate={{ opacity: 1, y: 0 }} className="relative bg-black min-h-[460px] max-h-[720px] w-full h-[60vh] sm:h-[70vh] p-2 sm:p-4 rounded-2xl text-xs flex items-end overflow-hidden">
+    animate={{ opacity: 1, y: 0 }} className="relative bg-black min-h-[29rem] max-h-[45rem] w-full h-[60vh] sm:h-[70vh] p-2 sm:p-4 rounded-2xl text-xs flex items-end overflow-hidden">
         <div className="w-full z-10">
             {/* Top */}
             <div className="flex flex-wrap gap-2 sm:gap-4 mb-2 sm:mb-4">
@@ -40,7 +40,7 @@ const BusinessCard = ({ business, location }) => {
                     <p>
                         {closing && (
                             <>
-                                Closes at <span className="border-black border rounded-[50%] ml-1 pr-[.8rem] pl-[.8rem] pt-[.22rem] pb-[.15rem] tracking-wider">{closing}</span>
+                                Closes at <span className="border-black border rounded-[50%] border-[0.0625rem] ml-1 pr-[.8rem] pl-[.8rem] pt-[.22rem] pb-[.15rem] tracking-wider">{closing}</span>
                             </>
                         )}
                     </p>
