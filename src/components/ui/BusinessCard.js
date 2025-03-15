@@ -19,50 +19,51 @@ const BusinessCard = ({ business, location }) => {
     const destination = `${business?.coordinates?.latitude || 0}, ${business?.coordinates?.longitude || 0}`;
     const closing = getClosingTimeToday(business);
     
-    const css = {
-        background: `
-          linear-gradient(8deg, rgba(0, 0, 0, 0.00) 70%, rgba(0, 0, 0, 0.6) 90%, rgba(0, 0, 0, 0.75) 100%),
-          linear-gradient(180deg, rgba(0, 0, 0, 0.00) 25%, rgba(0, 0, 0, 0.55) 55%, rgba(0, 0, 0, 0.65) 100%),
-          linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.7) 100%), 
-          url(${image}) no-repeat center / cover`
-      };
 
   return (
     <motion.div initial={{ opacity: 0, y: 0 }} 
-    animate={{ opacity: 1, y: 0 }} className="min-h-[460px] max-h-[640px] w-full h-[60vh] pr-5 pl-5 pt-5 pb-7 rounded-2xl flex flex-col grow justify-between text-cream text-xs" style={css}>
-        {/* Top */}
-        <div className="">
-            <div className="ml-auto flex flex-wrap justify-end gap-2 w-[75%]">
+    animate={{ opacity: 1, y: 0 }} className="relative bg-black min-h-[460px] max-h-[720px] w-full h-[60vh] sm:h-[70vh] p-2 sm:p-4 rounded-2xl text-xs flex items-end overflow-hidden">
+        <div className="w-full z-10">
+            {/* Top */}
+            <div className="flex flex-wrap gap-2 sm:gap-4 mb-2 sm:mb-4">
                 {categories.map((item, index) => (
                     <Pill key={index} text={item.title}/>
                 ))}
             </div>
+            {/* Bottom */}
+            <div className=" items-end flex bg-cream justify-between gap-10 flex-grow p-6 rounded-xl">
+                {/* Bottom left */}
+                <div className="text-left">
+                    <h2 className="mb-4 serif">{name}</h2>
+                    <div className="mb-4"><StarRating rating={rating}/></div>
+                    <p className="pb-11">{city} {price && `/ ${price}`}</p>
+                    <p>
+                        {closing && (
+                            <>
+                                Closes at <span className="border-black border rounded-[50%] ml-1 pr-[.8rem] pl-[.8rem] pt-[.22rem] pb-[.15rem] tracking-wider">{closing}</span>
+                            </>
+                        )}
+                    </p>
+                </div>
+                {/* Bottom right */}
+                <div className="flex flex-col self-end items-end h[11.5rem] gap-5">
+                    {['car', 'train', 'walk'].map(type => (
+                        <Transportation key={type} type={type} origin={origin} destination={destination} />
+                    ))}
+                </div>
+            </div> 
         </div>
-        {/* Bottom */}
-        <div className="flex justify-between gap-[4rem] flex-grow">
-            {/* Bottom left */}
-            <div className="text-left self-end">
-                <h2 className="mb-4 serif">{name}</h2>
-                <div className="mb-4"><StarRating rating={rating}/></div>
-                <p className="pb-14">{city} {price && `/ ${price}`}</p>
-                <p>
-                    {closing && (
-                        <>
-                            Closes at <span className="border rounded-[50%] ml-1 pr-[.8rem] pl-[.8rem] pt-[.22rem] pb-[.15rem] tracking-wider">{closing}</span>
-                        </>
-                    )}
-                </p>
-            </div>
-            {/* Bottom right */}
-            <div className="flex flex-col self-end items-end h[11.5rem] gap-5">
-                {['car', 'train', 'walk'].map(type => (
-                    <Transportation key={type} type={type} origin={origin} destination={destination} />
-                ))}
-            </div>
-        </div>
+        <div className="absolute z-0 bg-black w-full h-[80%] top-0 left-0 bg-top bg-cover" style={{ 
+            backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0.00) 51.54%, rgba(0, 0, 0, 0.60) 85.96%, #000 100%), url(${image})`,
+            backgroundSize: "cover",
+            backgroundPosition: "top"
+        }}>
+</div>
         
     </motion.div>
   );
 };
 
 export default BusinessCard;
+
+

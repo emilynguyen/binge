@@ -20,7 +20,7 @@ import { readData } from '@/utils/firebaseUtils';
 import createParty from '@/utils/createParty';
 
 
-const locationIcon = "/icons/location_32x32.svg";
+const locationIcon = "/icon/location_32x32.svg";
 
 
 
@@ -207,14 +207,16 @@ function Home() {
           required 
           disabled={loadingCurrLocation}
         />
-        <button className="icon bg-cream absolute right-3 top-[.8rem]" onClick={handleGetLocation}>
+        <div className="bg-white absolute right-2 top-[.55rem] pl-4">
+          <button className="icon location" onClick={handleGetLocation}>
                     <Image
                       src={locationIcon}
                       width="32"
                       height="32"
                       alt="Get current location"
                     />
-                  </button>
+            </button>
+        </div>
                   </div>
         <button className="primary" type="submit" name="createParty" disabled={loadingCurrLocation || createButtonDisabled}>{createButtonText}</button>
         {/*

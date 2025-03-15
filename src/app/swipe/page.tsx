@@ -14,12 +14,12 @@ import YesMatch from '@/components/ui/YesMatch';
 import NoMoreCards from '@/components/ui/NoMoreCards';
 
 
-import { listenToBusinessMatch, listenToEliminationCount, readData } from '@/utils/firebaseUtils';
+import { listenToBusinessMatch, listenToEliminationCount, listenToMembers, readData } from '@/utils/firebaseUtils';
 import { setMatch, resetMatches } from '@/utils/matchUtils';
 
 
-const xIcon = "/icons/x_40x40.svg";
-const smileyCreamIcon = "/icons/smiley_cream_40x40.svg";
+const xIcon = "/icon/x_40x40.svg";
+const smileyIcon = "/icon/smiley_40x40.svg";
 
 
 
@@ -30,6 +30,7 @@ const Swipe = () => {
   const [partyID, setPartyID] = useState('');
   const [sessionID, setSessionID] = useState('');
   const [location, setLocation] = useState('');
+  const [memberCount, setMemberCount] = useState('?');
 
 
   // Business data
@@ -51,6 +52,7 @@ const Swipe = () => {
       setBusinessMatch(partyRef.businessMatch);
       setEliminationCount(partyRef.eliminationCount);
       setNumCards(partyRef.businesses.length);
+      setMemberCount(Object.keys(partyRef.members).length);
       setViewCount(Object.keys(partyRef.members[sessionIDParam].viewed).length);
       setCurrBusiness(await getNextBusiness(partyIDParam, sessionIDParam));
     } catch (err) {
@@ -88,10 +90,18 @@ const Swipe = () => {
 
     const unsubscribeEliminationCount = listenToEliminationCount(partyIDParam, updateEliminationCount);
 
+    // Member count listener
+    const updateMemberCount = (membersData) => {
+      setMemberCount(Object.keys(membersData).length || 0);
+    };
+
+    const unsubscribeMemberCount = listenToMembers(partyIDParam, updateMemberCount);
+
     // Cleanup listeners on component unmount
     return () => {
       unsubscribeBusinessMatch();
       unsubscribeEliminationCount();
+      unsubscribeMemberCount();
     };
 
     
@@ -223,28 +233,34 @@ async function getNextBusiness(partyID, sessionID) {
 
  if (businessMatch) {
   return (
-    <YesMatch business={businessMatch} handleTryAgain={handleTryAgain} handleLeaveParty={handleLeaveParty}/>
+    <>
+     <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
+     <YesMatch business={businessMatch} handleTryAgain={handleTryAgain} />
+    </>
   );
  }
 
  if (numCards && eliminationCount >= numCards) {
   return (
-   <NoMatch handleTryAgain={handleTryAgain} handleLeaveParty={handleLeaveParty}/>
+    <>
+     <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
+    <NoMatch handleTryAgain={handleTryAgain}/>
+   </>
   );
  }
 
  if (numCards && viewCount == numCards) {
   return (
     <>
-    <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} handleLeaveParty={handleLeaveParty}/>
+    <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
     <NoMoreCards />
     </>
   );
  }
 
   return (
-    <div className="w-full justify-cente">
-       <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} handleLeaveParty={handleLeaveParty}/>
+    <div className="w-full">
+       <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
      
       <div className="w-full h-full">
             {/* Card */}
@@ -252,7 +268,7 @@ async function getNextBusiness(partyID, sessionID) {
             {/* Buttons */}
             <div className="flex w-full gap-4 mt-4">
               <Button className="secondary" alt="No" icon={xIcon} onClick={handleNoClick} />
-              <Button className="primary" alt="Yes" icon={smileyCreamIcon} onClick={handleYesClick} />
+              <Button className="primary" alt="Yes" icon={smileyIcon} onClick={handleYesClick} />
             </div>
           <Error error={error} mb="0"/>
       </div>

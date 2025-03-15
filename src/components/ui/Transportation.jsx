@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
-const carIcon = "/icons/car_20x20.svg";
-const trainIcon = "/icons/train_20x20.svg";
-const walkIcon = "/icons/walk_20x20.svg";
+const carIcon = "/icon/car_20x20.svg";
+const trainIcon = "/icon/train_20x20.svg";
+const walkIcon = "/icon/walk_20x20.svg";
 
 function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);

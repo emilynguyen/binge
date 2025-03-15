@@ -8,8 +8,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
 import { listenToMembers, listenToStart, writeData } from '@/utils/firebaseUtils';
 
-const copyIcon = "/icons/copy_32x32.svg";
-const copySuccessIcon = "/icons/copy_success_32x32.svg";
+const copyIcon = "/icon/copy_32x32.svg";
+const copySuccessIcon = "/icon/copy_success_32x32.svg";
 
 
 
@@ -92,11 +92,11 @@ export default function Join() {
 
   return (
     <>
-      <div className="dotted-underline mb-14">
-        <p className="text-xs mb-4">Party code</p>
-        <div className="flex gap-3 items-center justify-center mb-2">
-          <h3>{partyID}</h3>
-          <button className="icon inline-block" onClick={() => handleCopyCode(partyID)}>
+      <div className="red-underline mb-10">
+        <p className="text-xs mb-3">Party code</p>
+        <div className="flex gap-2 items-center justify-center">
+          <h2 className="mono">{partyID}</h2>
+          <button className="icon mb-1 copy inline-block" onClick={() => handleCopyCode(partyID)}>
             <Image
               src={currentCopyIcon}
               width="32"
@@ -104,11 +104,12 @@ export default function Join() {
               alt="Copy code"
             />
           </button></div>
-      </div>
-      <div className="dotted-underline mb-16">
-        <p className="text-xs mb-[-.5rem]">No. in party</p>
-        <p className="display mb-[-.8rem]">({memberCount})</p>
-      </div>
+        </div>
+        <div className="red-underline mb-20">
+          <p className="text-xs mb-[-.5rem]">No. in party</p>
+          <p className="display mb-[-.8rem]">({memberCount})</p>
+        </div>
+     
       <div className='w-full'>
           <Button className="secondary w-full" text="Everyone is here"  onClick={handleStart}/>
           <a className="cursor-pointer mt-10 text-sm inline-block" onClick={handleLeaveParty}>Leave party</a>

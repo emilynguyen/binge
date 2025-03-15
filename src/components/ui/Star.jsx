@@ -1,8 +1,8 @@
 import Image from 'next/image';
 
-const fullStar = "/icons/star_full_20x20.svg";
-const halfStar = "/icons/star_half_20x20.svg";
-const emptyStar = "/icons/star_empty_20x20.svg";
+const fullStar = "/icon/star_full_20x20.svg";
+const halfStar = "/icon/star_half_20x20.svg";
+const emptyStar = "/icon/star_empty_20x20.svg";
 
 
 const Star = ({ type }) => {
