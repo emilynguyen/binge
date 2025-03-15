@@ -131,7 +131,7 @@ function Home() {
       } catch (err) {
         setCreateButtonDisabled(false)
         setCreateButtonText("Create party");
-        setLocationError('Error creating party, please try again');
+        setLocationError(err);
         console.log(err);
       }
   };

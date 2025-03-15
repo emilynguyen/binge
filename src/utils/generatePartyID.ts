@@ -11,6 +11,16 @@ function getFruit() {
     return fruit;
   }
 
+  function getIngredient() {
+    let ingredient;
+    const regex = /^[a-zA-Z]+$/; // Regular expression to check for alphabetic characters only
+  
+    do {
+      ingredient = faker.food.ingredient();
+    } while (!regex.test(ingredient));
+    return ingredient;
+  }
+
 function getMeat() {
   let fruit;
   const regex = /^[a-zA-Z]+$/; // Regular expression to check for alphabetic characters only
@@ -39,9 +49,9 @@ function generatePartyID() {
     let partyID = faker.food.adjective();
 
     // Randomly pick a food category
-    const categories = ['fruit', 'meat', 'vegetables'];
+    const categories = ['fruit', 'meat', 'vegetables', 'ingredient'];
     const randomInt = Math.floor(Math.random() * (categories.length) );
-    const food = categories[randomInt]
+    const food = categories[randomInt];
 
     // Concat
     switch(food) {
@@ -49,11 +59,13 @@ function generatePartyID() {
           partyID += "-" + getFruit();
           break;
         case 'meat':
-            partyID += "-" + getMeat();
+          partyID += "-" + getMeat();
           break;
         case 'vegetables':
-            partyID += "-" + getVegetable();
-        break;
+          partyID += "-" + getVegetable();
+          break;
+        case 'ingredient':
+          partyID += "-" + getIngredient();
     }
 
     // Clean
@@ -66,10 +78,19 @@ async function generateUniquePartyID() {
   try {
     const db = await readData("/");
     let uniqueID = false;
+    let attempts = 0;
           
     while (!uniqueID) {
+        if (attempts > 20000) {
+          throw "Server is full, please try again later";
+        }
+        attempts++;
+        
         // Generate unique party ID
         const partyID = generatePartyID();
+
+        // Skip if > 12 chars
+        if (partyID.length > 12) continue;
   
         // Use partyID if it isn't already in use or if db is empty
         if (!db || !db[partyID]) {
@@ -77,8 +98,9 @@ async function generateUniquePartyID() {
           return partyID;
         }
     }
-  } catch {
-    console.log('Error generating unique partyID');
+  } catch (err) {
+    console.error(err);
+    throw err;
   }
 }
 
