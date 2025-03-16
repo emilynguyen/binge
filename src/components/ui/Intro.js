@@ -13,7 +13,7 @@ const Intro = ({ handleCloseIntro=null, className="" }) => {
     <div className={`intro h-full bg-red text-cream flex flex-col justify-center text-center overflow-hidden ${className}`}>
       <div className="flex flex-col relative justify-center items-center gap-6 pl-10 pr-10">
           {/* Text */}
-          <Image src={logo} width={126} height={66} style={{ width: '7.875rem' }} alt="Binge"/>
+          <Image src={logo} width={88} height={46} style={{ width: '5.5rem' }} alt="Binge"/>
           <h3 className="max-w-xs">Swipe through restaurants until there’s a match — no chit-chat, no negotiation.</h3>
           <a className="cursor-pointer underline lg:hidden" onClick={handleCloseIntro}>
           Start &#x2192;

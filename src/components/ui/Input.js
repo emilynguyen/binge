@@ -1,9 +1,9 @@
 import React from 'react';
 
 
-const Input = ({ type, placeholder, className }) => {
+const Input = ({ type, placeholder, className, loading=false }) => {
   return (
-    <input className={className} type={type} placeholder={placeholder}>
+    <input className={`${className} ${loading ? "loading" : ""}`} type={type} placeholder={placeholder}>
     </input>
   );
 };

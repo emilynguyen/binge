@@ -50,11 +50,11 @@ export default function RootLayout({
       <body
         className='antialiased flex flex-col min-h-full'
       >
-        <main className="flex min-h-full grow">
-          <div className="hidden lg:block grow w-[14vw] max-w-[35rem]">
+        <main className="flex min-h-full grow w-full">
+          <div className="hidden w-full lg:block grow w[14vw] max-w-[35rem]">
             <Intro className="rounded-r-3xl"/>
           </div>
-          <div className="flex  justify-center items-center flex-col grow p-6 md:pl-12 md:pr-12 text-center">  
+          <div className="flex w-full justify-center items-center flex-col grow p-6 md:pl-12 md:pr-12 text-center ">  
               <div className="relative w-full grow max-w-md flex flex-col justify-center items-center pt-12 pb-12">
               {children}
               </div>

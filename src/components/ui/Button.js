@@ -2,7 +2,7 @@ import Image from 'next/image';
 const arrowIcon = "/icons/arrow_right_40x40.svg";
 
 
-const Button = ({ text, icon, alt, onClick, className, type="button", name, arrow, disabled=false }) => {
+const Button = ({ text, icon, alt, onClick, className, type="button", name, arrow, disabled=false, loading=false }) => {
   if (arrow) {
     return (
       <button
@@ -25,7 +25,7 @@ const Button = ({ text, icon, alt, onClick, className, type="button", name, arro
       onClick={onClick ? onClick : undefined}
     >
       {icon && <Image src={icon} alt={alt || 'icon'} className="inline-block" width={40} height={40} style={{ width: '2.5rem' }}/>}
-      {text && <span className={`inline-block ${icon ? 'ml-2 mr-2' : ''}`}>{text}</span>}
+      {text && <span className={`inline-block ${icon ? 'ml-2 mr-2' : ''} ${loading ? "loading" : ""}`}>{text}</span>}
     </button>
   );
 };
