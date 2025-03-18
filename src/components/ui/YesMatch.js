@@ -4,17 +4,22 @@ const yelpIcon = "/icon/yelp_40x40.svg";
 const mapsIcon = "/icon/google-maps_40x40.svg";
 import Button from '@/components/ui/Button';
 
+
+
+const YesMatch = ({ business, origin, handleTryAgain }) => {
   const handleYelpClick = (business) => {
     window.open(business.url, '_blank');
   };
 
   const handleGoogleMapsClick = (business) => {
-    const encodedAddress = encodeURIComponent(business.name);
-    const url = `http://maps.google.com/?q=${encodedAddress}`;
+    const destinationAddress = Object.values(business.location.display_address).join(",");
+    const destination = business.name + ", " + destinationAddress;
+    //const url = `http://maps.google.com/?q=${encodedAddress}`;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&origin=${encodeURIComponent(origin)}`
+
     window.open(url, '_blank');
   };
-
-const YesMatch = ({ business, handleTryAgain }) => {
+  
   return (
      <>
      <div>

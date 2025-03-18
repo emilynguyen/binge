@@ -9,8 +9,7 @@ import axios from 'axios';
  * @param location 
  * @returns partyID of new party
  */
-async function createParty(location) {
-    console.log('Creating new party in location: ' + location);
+async function createParty(locationName, locationCoords) {
     try {        
         // Generate unique party ID
         const partyID = await generateUniquePartyID();
@@ -19,7 +18,7 @@ async function createParty(location) {
         }
         
         
-        const businesses = await getBusinessesFromYelp(location, 20);
+        const businesses = await getBusinessesFromYelp(locationCoords, 20);
 
         if (!businesses) {
             throw "Yelp returned no businesses for this location";
@@ -28,7 +27,10 @@ async function createParty(location) {
         // Add party to db
         await writeData(partyID, { 
             'timestamp' : Date.now(), 
-            'location' : location,
+            'location' : {
+                name: locationName,
+                coords: locationCoords
+            },
             'isStarted' : false,
             'members' : [],
             'eliminationCount' : 0,

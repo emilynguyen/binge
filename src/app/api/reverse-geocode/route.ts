@@ -1,33 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server';
-import axios from 'axios';
 
-// Set your Google Maps Geocoding API key here
-const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+import { NextResponse } from 'next/server';
+
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const coords = searchParams.get('coords').replace(/\s/g, '');
+  const API_KEY = process.env.HERE_API_KEY;
 
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const lat = searchParams.get('lat');
-  const lng = searchParams.get('lng');
+  console.log(`Reverse geocoding ${coords}`);
 
-  
-
-  if (!lat || !lng) {
-    return NextResponse.json({ error: 'Latitude and longitude are required' }, { status: 400 });
+  if (!coords) {
+    return NextResponse.json({ error: 'Coordinates are required' }, { status: 400 });
   }
 
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`;
+  const url = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${encodeURIComponent(coords)}&lang=en-US&apiKey=${API_KEY}`;
+
+
 
   try {
-    const response = await axios.get(url);
-    if (response.data.status === 'OK') {
-      const address = response.data.results[0].formatted_address;
-      return NextResponse.json({ address });
+    const res = await fetch(url);
+    const data = await res.json();
+
+
+    if (data.items && data.items.length > 0) {
+      const address = data.items[0].title;
+
+      console.log(address);
+
+      return NextResponse.json(address, { status: 200 });
     } else {
-      throw new Error(`Geocoding API error: ${response.data.status}`);
+      return NextResponse.json({ error: 'No results found' }, { status: 404 });
     }
-  } catch (err) {
-    console.error('Error reverse geocoding:', err.message);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (error) {
+    console.error('Error fetching geocode data:', error);
+    return NextResponse.json({ error: 'Failed to fetch geocode data' }, { status: 500 });
   }
 }

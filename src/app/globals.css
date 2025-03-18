@@ -269,7 +269,7 @@ input:focus {
 }
 
 .intro {
-  transition: all 300ms ease-in-out;
+  transition: margin 300ms ease-in-out;
 }
 
 .intro.hide {

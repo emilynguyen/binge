@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
@@ -13,16 +12,41 @@ const CreatePartyForm = () => {
   const [createButtonText, setCreateButtonText] = useState('Create party');
   const [createButtonDisabled, setCreateButtonDisabled] = useState(false);
   const [locationInput, setLocationInput] = useState('');
+  const [currentLocationCoords, setCurrentLocationCoords] = useState(null);
+
   const [loadingCurrLocation, setLoadingCurrLocation] = useState(false);
     
   const router = useRouter();
+
+  function isCoordinates(str) {
+    
+    if (typeof str !== 'string') {
+      return false;
+    }
+  
+    const parts = str.split(',');
+    if (parts.length !== 2) {
+      return false;
+    }
+  
+    const latitude = parseFloat(parts[0]);
+    const longitude = parseFloat(parts[1]);
+  
+    if (isNaN(latitude) || isNaN(longitude)) {
+      return false;
+    }
+  
+    // Latitude should be between -90 and +90, longitude between -180 and +180
+    return latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180;
+  }
     
   /*
    * Get user's location
    */
   const handleGetLocation = async (e) => {
     e.preventDefault();
-    
+
+    setLocationError('');
     setLoadingCurrLocation(true);
     setLocationInput(' ');
     setCreateButtonDisabled(true);
@@ -32,36 +56,38 @@ const CreatePartyForm = () => {
       // Get current location
       navigator.geolocation.getCurrentPosition(
         async (position) => {
+          // Save coordinates
+          const coords = `${position.coords.latitude}, ${position.coords.longitude}`;
+          setCurrentLocationCoords(coords.replace(/\s/g, ''));
+
+          let currentLocation = coords;
+          
           // Reverse geocode to get address
           try {
-            const response = await axios.get(`/api/reverse-geocode`, {
-              params: {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-              }
-            });
-            const data = response.data;
-            
-            if (!data.address) {
-              console.error('Could not get current location');
-              throw "Could not get current location";
-            }
+            const address = await reverseGeocode(coords);
 
-            // Set address as input value            
-            setLocationInput(data.address);
+            if (address) currentLocation = address;
+            
           } catch {
-            setLocationError('Could not get current location');
-            setLoadingCurrLocation(false);
-            setLocationInput("");
-          } finally {
-            setCreateButtonDisabled(false);
+            console.error('Error reverse geocoding');
           }
+          
+         // Update input
+          setLocationInput(currentLocation); 
+          setLoadingCurrLocation(false);
+          setCreateButtonDisabled(false);
         },
         (err) => {
-          setLocationError("Could not get current location");
-          setLoadingCurrLocation(false);
           setLocationInput("");
+          setLoadingCurrLocation(false);
           setCreateButtonDisabled(false);
+          if (err.code == err.PERMISSION_DENIED) {
+            setLocationError("Could not get current location — permission denied");
+          } else {
+            setLocationError("Could not get current location");
+          }
+          
+
         }
       );
     } else {
@@ -80,6 +106,32 @@ const CreatePartyForm = () => {
     setLocationError("");
   };
 
+  const reverseGeocode = async (coords) => {
+    const res = await fetch(`/api/reverse-geocode?coords=${coords}`);
+    const data = await res.json();
+
+    if (res.ok) {
+      return data; 
+    } else {
+      console.error('Error reverse geocoding');
+      return null;
+    }
+  };
+
+
+  const geocode = async (address) => {
+    const res = await fetch(`/api/geocode?address=${address}`);
+    const data = await res.json();
+
+    if (res.ok) {
+      return data; // returns coordinates as string
+    } else {
+      console.error('Error fetching geocode data for: ' + address, data.error);
+      return null;
+    }
+  };
+
+
   /*
    * On submit, go to /join
    */
@@ -87,22 +139,35 @@ const CreatePartyForm = () => {
     e.preventDefault();
     setCreateButtonText("Creating your party");
     setCreateButtonDisabled(true);
-    
-    const location = locationInput;
+    setLocationError("");
 
+    
     try {
+      let locationCoords; 
+      let locationName = locationInput; 
+
+      if (currentLocationCoords) {
+        locationCoords = currentLocationCoords;
+      } else {
+        // Geocode if needed
+        locationCoords = isCoordinates(locationInput)
+          ? locationInput
+          : await geocode(locationInput);
+      }
+      
+
       // Create party (createParty also creates first member)
-      const generatedPartyID = await createParty(location);
+      const generatedPartyID = await createParty(locationName, locationCoords);
       if (generatedPartyID) {
         router.push(`/join?party=${generatedPartyID}`);
       } else {
-        throw new Error("Failed to create party");
+        throw "Failed to create party";
       }
     } catch (err) {
       setCreateButtonDisabled(false);
       setCreateButtonText("Create party");
-      setLocationError(err.message);
-      console.log(err);
+      setLocationError(err);
+      //console.error(err);
     }
   };
 
@@ -121,8 +186,8 @@ const CreatePartyForm = () => {
           />
           { loadingCurrLocation ? <span className="loading opacity-50 absolute w-full mt-6 left-0">Getting your location</span> : null }   
         </div>
-        <div className="bg-white absolute right-2 top-[.55rem] pl-4">
-          <button className="icon location" onClick={handleGetLocation}>
+        <div className={`${!loadingCurrLocation && 'bg-white'} absolute right-2 top-[.55rem] pl-4`}>
+          <button type="button" className="icon location" onClick={handleGetLocation}>
             <Image
               src={locationIcon}
               width={32} height={32} style={{ width: '2rem' }}

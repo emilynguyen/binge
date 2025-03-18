@@ -235,7 +235,7 @@ async function getNextBusiness(partyID, sessionID) {
   return (
     <>
      <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
-     <YesMatch business={businessMatch} handleTryAgain={handleTryAgain} />
+     <YesMatch business={businessMatch} origin={location.name} handleTryAgain={handleTryAgain} />
     </>
   );
  }
@@ -264,7 +264,7 @@ async function getNextBusiness(partyID, sessionID) {
      
       <div className="w-full h-full">
             {/* Card */}
-            <BusinessCard business={currBusiness} location={location} />
+            <BusinessCard business={currBusiness} location={location.coords} />
             {/* Buttons */}
             <div className="flex w-full gap-4 mt-4">
               <Button className="secondary" alt="No" icon={xIcon} onClick={handleNoClick} />

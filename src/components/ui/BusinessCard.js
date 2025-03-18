@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
 
 import Pill from '@/components/ui/Pill';
@@ -18,11 +19,33 @@ const BusinessCard = ({ business, location }) => {
     const origin = location;
     const destination = `${business?.coordinates?.latitude || 0}, ${business?.coordinates?.longitude || 0}`;
     const closing = getClosingTimeToday(business);
+    const [estimates, setEstimates] = useState(null);
+
     
+    const fetchEstimates = async () => {  
+        if (!parseFloat(origin) || !parseFloat(destination)) {
+          setEstimates(null);
+          return;
+        }
+
+        const res = await fetch(`/api/eta?origin=${origin}&destination=${destination}`);
+            
+        if (res.ok) {
+          const data = await res.json();
+          setEstimates(data);
+        } else {
+          console.error("Error fetching distance matrix");
+        }
+      }
+
+        useEffect(() => {
+          fetchEstimates();
+        }, [origin, destination]);
 
   return (
     <motion.div initial={{ opacity: 0, y: 0 }} 
     animate={{ opacity: 1, y: 0 }} className="relative bg-black min-h-[29rem] max-h-[45rem] w-full h-[60vh] sm:h-[70vh] p-2 sm:p-4 rounded-2xl text-xs flex items-end overflow-hidden">
+        
         <div className="w-full z-10">
             {/* Top */}
             <div className="flex flex-wrap gap-2 sm:gap-4 mb-2 sm:mb-4">
@@ -47,8 +70,8 @@ const BusinessCard = ({ business, location }) => {
                 </div>
                 {/* Bottom right */}
                 <div className="flex flex-col self-end items-end h[11.5rem] gap-5">
-                    {['car', 'train', 'walk'].map(type => (
-                        <Transportation key={type} type={type} origin={origin} destination={destination} />
+                    {['car', 'walk'].map(type => (
+                        <Transportation key={type} type={type} eta={estimates && estimates[type]} />
                     ))}
                 </div>
             </div> 
