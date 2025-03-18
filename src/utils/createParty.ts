@@ -18,7 +18,7 @@ async function createParty(locationName, locationCoords) {
         }
         
         
-        const businesses = await getBusinessesFromYelp(locationCoords, 20);
+        const businesses = await getBusinessesFromYelp(locationCoords, 100);
 
         if (!businesses) {
             throw "Yelp returned no businesses for this location";
