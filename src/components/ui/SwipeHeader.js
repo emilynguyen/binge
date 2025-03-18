@@ -10,7 +10,7 @@ const SwipeHeader = ({cardsLeft, handleLeaveParty, memberCount="72" }) => {
             <div className="text-red flex gap-6">
                 <div className="flex items-center gap-1">
                     <Image src={restaurantIcon} width={20} height={20} style={{ width: '1.25rem' }}alt="Cards left: " />
-                    <p>{cardsLeft}</p>
+                    <p>{cardsLeft} cards left</p>
                 </div>
                 <div className="flex items-center gap-1">
                     <Image src={personIcon} width={20} height={20} style={{ width: '1.25rem' }} alt="Cards left: " />

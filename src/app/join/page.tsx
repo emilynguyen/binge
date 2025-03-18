@@ -20,7 +20,7 @@ export default function Join() {
     const [isStarted, setIsStarted] = useState(false);
     const [error, setError] = useState("");
     const [currentCopyIcon, setCopyIcon] = useState(copyIcon);
-    
+    const [startButtonText, setStartButtonText] = useState('Everyone is here');
     const router = useRouter();
     
     
@@ -54,7 +54,10 @@ export default function Join() {
 
   useEffect(() => {
     if (isStarted) {
-        router.push(`/swipe?party=${partyID}`);
+       setStartButtonText('Starting');
+       router.push(`/swipe?party=${partyID}`);
+    } else {
+      setStartButtonText('Everyone is here');
     }
   }, [isStarted]);
 
@@ -81,6 +84,7 @@ export default function Join() {
   // TODO watch for isStarted and automatically redirect everyone in party when it's true
   async function handleStart() {
     try {
+
       await writeData(`/${partyID}/isStarted`, true);
     } catch (err) {
       console.error(err);
@@ -112,7 +116,7 @@ export default function Join() {
         </div>
      
       <div className='w-full'>
-          <Button className="secondary w-full" text="Everyone is here"  onClick={handleStart}/>
+          <Button className="secondary w-full" text={startButtonText}  onClick={handleStart} loading={isStarted}/>
           <a className="cursor-pointer mt-10 text-sm inline-block" onClick={handleLeaveParty}>Leave party</a>
           <p className="mt-6 h-[1rem] error">{error && error}</p>
       </div>

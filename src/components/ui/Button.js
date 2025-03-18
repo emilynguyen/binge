@@ -20,7 +20,7 @@ const Button = ({ text, icon, alt, onClick, className, type="button", name, arro
     <button
       type={type} 
       name={name}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={`${className} text-center`}
       onClick={onClick ? onClick : undefined}
     >

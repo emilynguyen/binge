@@ -218,8 +218,8 @@ async function getNextBusiness(partyID, sessionID) {
      setBusinessMatch(null);
      setEliminationCount(0);
 
-     // TODO Need listener to reset view count for everyone
-     setViewCount(0);
+     // ?????
+     //setViewCount(0);
  
      setCurrBusiness(await getNextBusiness(partyID, sessionID));
      // console.log('RESTARTING');
@@ -234,7 +234,7 @@ async function getNextBusiness(partyID, sessionID) {
  if (businessMatch) {
   return (
     <>
-     <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
+     <SwipeHeader cardsLeft={`${numCards - viewCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
      <YesMatch business={businessMatch} origin={location.name} handleTryAgain={handleTryAgain} />
     </>
   );
@@ -243,7 +243,7 @@ async function getNextBusiness(partyID, sessionID) {
  if (numCards && eliminationCount >= numCards) {
   return (
     <>
-     <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
+     <SwipeHeader cardsLeft={`${numCards - viewCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
     <NoMatch handleTryAgain={handleTryAgain}/>
    </>
   );
@@ -252,7 +252,7 @@ async function getNextBusiness(partyID, sessionID) {
  if (numCards && viewCount == numCards) {
   return (
     <>
-    <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
+    <SwipeHeader cardsLeft={`${numCards - viewCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
     <NoMoreCards />
     </>
   );
@@ -260,7 +260,7 @@ async function getNextBusiness(partyID, sessionID) {
 
   return (
     <div className="w-full">
-       <SwipeHeader cardsLeft={`${numCards - eliminationCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
+       <SwipeHeader cardsLeft={`${numCards - viewCount}`} memberCount={memberCount} handleLeaveParty={handleLeaveParty}/>
      
       <div className="w-full h-full">
             {/* Card */}

@@ -12,6 +12,8 @@ import Error from '@/components/ui/Error';
 
 const JoinPartyForm = ({  }) => {
     const [joinError, setJoinError] = useState(null);
+    const [joiningParty, setJoiningParty] = useState(false);
+    const [joinButtonText, setJoinButtonText] = useState('Join party');
     const router = useRouter();
 
 
@@ -20,6 +22,9 @@ const JoinPartyForm = ({  }) => {
     */
     async function handleJoin(e) {
         e.preventDefault();
+        setJoinButtonText("Joining party");
+        setJoiningParty(true);
+
         const partyID = e.target.partyID.value;
         
         setJoinError(null);
@@ -28,13 +33,11 @@ const JoinPartyForm = ({  }) => {
         // Check that party exists
         const partyRef = await readData(`/${partyID}`);
         if (!partyRef) {
-            setJoinError('Party not found');
-            return;
+            throw "Party not found";
         }
         // Check that party is still open
         if (partyRef.isStarted) {
-            setJoinError('This party is closed');
-            return;
+            throw "This party is closed";
         }
         if (router) {
             
@@ -46,8 +49,10 @@ const JoinPartyForm = ({  }) => {
             router.push(`/join?party=${partyID}`);
         }
     
-        } catch {
-        setJoinError('Error joining: please try again');
+        } catch (err) {
+            setJoinButtonText("Join party");
+            setJoiningParty(false);
+            setJoinError(err);
         } 
     };
   
@@ -60,7 +65,7 @@ const JoinPartyForm = ({  }) => {
                 type="text"
                 required
             />
-            <Button type="submit" className="secondary" text="Join party" name="joinParty"/>
+            <Button type="submit" className="secondary" text={joinButtonText} name="joinParty" loading={joiningParty}/>
             <Error error={joinError} />
         </Form>
     );

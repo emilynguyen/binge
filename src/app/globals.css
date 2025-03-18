@@ -130,8 +130,12 @@ button {
   width: 100%;
 }
 
-button:disabled, button[disabled] {
+button.primary:disabled, button.primary[disabled] {
   color: var(--cream-70) !important;
+}
+
+button.secondary:disabled, button.secondary[disabled] {
+  color: var(--red-80) !important;
 }
 
 button.primary {
@@ -160,7 +164,6 @@ button.icon {
 }
 
 button.location {
-  background-color: var(--white);
   border: 0.0625rem solid var(--red);
 }
 

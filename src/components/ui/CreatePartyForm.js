@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import Error from '@/components/ui/Error';
 import createParty from '@/utils/createParty';
+import { sendGAEvent } from '@next/third-parties/google'
+
 
 const locationIcon = "/icon/location_32x32.svg";
 
@@ -45,6 +47,7 @@ const CreatePartyForm = () => {
    */
   const handleGetLocation = async (e) => {
     e.preventDefault();
+    sendGAEvent('event', 'buttonClicked', { value: 'Get location' });
 
     setLocationError('');
     setLoadingCurrLocation(true);
@@ -103,8 +106,13 @@ const CreatePartyForm = () => {
    */
   const handleLocationInputChange = (e) => {
     setLocationInput(e.target.value);
+    setCurrentLocationCoords('');
     setLocationError("");
   };
+
+  const handleLocationInputClick = () => {
+    sendGAEvent('event', 'inputClicked', { value: 'Input location' });
+  }
 
   const reverseGeocode = async (coords) => {
     const res = await fetch(`/api/reverse-geocode?coords=${coords}`);
@@ -178,9 +186,10 @@ const CreatePartyForm = () => {
           <input className="pr-8"
             name="location"
             value={locationInput}
-            placeholder="Your location"
+            placeholder="Your current address"
             type="text"
             onChange={handleLocationInputChange}
+            onClick={handleLocationInputClick}
             required 
             disabled={loadingCurrLocation}
           />

@@ -1,30 +1,10 @@
-
-
 import type { Metadata } from "next";
+import { GoogleAnalytics } from '@next/third-parties/google'
+
 
 import "./globals.css";
 import Footer from '@/components/layout/Footer';
 import Intro from '@/components/ui/Intro';
-
-
-/*
-import localFont from 'next/font/local';
-
-const basis = localFont({
-  src: [
-    {
-      path: '/font/gt-alpina-standard-regular-italic.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '/font/Basis-Grotesque-Mono-Pro-Medium.woff2',
-      weight: '500',
-      style: 'normal',
-    }
-  ],
-})
-*/
 
 
 
@@ -63,6 +43,7 @@ export default function RootLayout({
         </main>
        
       </body>
+      <GoogleAnalytics gaId="G-SYQSHMG9Q3" />
     </html>
   );
 }

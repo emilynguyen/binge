@@ -31,7 +31,7 @@ export async function GET(request) {
     params: {
       location,
       term: 'restaurants',
-      radius: 16093,
+      radius: 11265,
       sort_by: 'best_match',
       limit: 50,
       offset,
