@@ -57,7 +57,7 @@ const BusinessCard = ({ business, location }) => {
             <div className=" items-end flex bg-cream justify-between gap-10 flex-grow p-4 sm:p-6 rounded-xl">
                 {/* Bottom left */}
                 <div className="text-left">
-                    <h2 className="mb-4 serif">{name}</h2>
+                    <h2 className="mb-4 serif text-balance">{name}</h2>
                     <div className="mb-4"><StarRating rating={rating}/></div>
                     <p className="pb-11">{city} {price && `/ ${price}`}</p>
                     <p>

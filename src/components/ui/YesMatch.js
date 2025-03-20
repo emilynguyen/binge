@@ -23,7 +23,7 @@ const YesMatch = ({ business, origin, handleTryAgain }) => {
   return (
      <>
      <div>
-       <h1 className="inline italic">{business.name}</h1>
+       <h1 className="inline italic text-balance">{business.name}</h1>
        <h1 className="inline mono"> is a match!</h1>
      </div>
      <Image src={smileyRedIcon} className="mt-10 mb-10" width={80} height={80} style={{ width: '5rem' }} alt="Smiley face" />
