@@ -1,6 +1,7 @@
 import { writeData } from "@/utils/firebaseUtils";
 import generateUniquePartyID from "@/utils/generatePartyID";
 import getBusinessesFromYelp from "@/utils/getBusinessesFromYelp";
+import getPlacesFromFoursquare from "@/utils/getPlacesFromFoursquare";
 
 import axios from 'axios';
 
@@ -18,10 +19,12 @@ async function createParty(locationName, locationCoords) {
         }
         
         
-        const businesses = await getBusinessesFromYelp(locationCoords, 100);
+        //const businesses = await getBusinessesFromYelp(locationCoords, 100);
+
+        const businesses = await getPlacesFromFoursquare(locationCoords, 50);
 
         if (!businesses) {
-            throw "Yelp returned no businesses for this location";
+            throw "Foursquare returned no places for this address";
         }
 
         // Add party to db

@@ -8,17 +8,31 @@ import StarRating from '@/components/ui/StarRating';
 import Transportation from '@/components/ui/Transportation';
 import getClosingTimeToday from "@/utils/getClosingTimeToday";
 
+const imageHeight = 600;
+
 
 const BusinessCard = ({ business, location }) => {
     const name = business?.name || 'Loading...';
-    const image = business?.image_url || '';
-    const rating = business?.rating || 0;
+
+    const photo = business?.details?.photos?.[0] || {};
+    const imageSize = photo.width && photo.height
+        ? `${(imageHeight / photo.height) * photo.width}x${imageHeight}`
+        : '';
+    const image = photo.prefix && photo.suffix
+        ? `${photo.prefix}${imageSize}${photo.suffix}`
+        : '';
+
+    const rating = business?.details?.rating/2 || 0;
     const categories = business?.categories || [];
-    const price = business?.price || '';
-    const city = business?.location?.city || 'Unknown';
+    
+    const price = '$'.repeat(business?.details?.price) || '';
+    const city = business?.location?.locality || 'Unknown';
     const origin = location;
-    const destination = `${business?.coordinates?.latitude || 0}, ${business?.coordinates?.longitude || 0}`;
-    const closing = getClosingTimeToday(business);
+
+    const destinationCoords = business?.geocodes?.main || {};
+    const destination = `${destinationCoords.latitude || 0}, ${destinationCoords.longitude || 0}`;
+    
+    const closing = getClosingTimeToday(business?.details?.hours || {});
     const [estimates, setEstimates] = useState(null);
 
     
@@ -50,7 +64,7 @@ const BusinessCard = ({ business, location }) => {
             {/* Top */}
             <div className="flex flex-wrap gap-2 sm:gap-4 mb-2 sm:mb-4">
                 {categories.map((item, index) => (
-                    <Pill key={index} text={item.title}/>
+                    <Pill key={index} text={item.short_name}/>
                 ))}
             </div>
             {/* Bottom */}

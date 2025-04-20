@@ -12,10 +12,11 @@ const YesMatch = ({ business, origin, handleTryAgain }) => {
   };
 
   const handleGoogleMapsClick = (business) => {
-    const destinationAddress = Object.values(business.location.display_address).join(",");
+    const destinationAddress = business.location.formatted_address;
     const destination = business.name + ", " + destinationAddress;
-    //const url = `http://maps.google.com/?q=${encodedAddress}`;
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&origin=${encodeURIComponent(origin)}`
+   // const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&origin=${encodeURIComponent(origin)}`
+
+   const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)},${encodeURIComponent(destinationAddress)}`;
 
     window.open(url, '_blank');
   };
@@ -28,7 +29,9 @@ const YesMatch = ({ business, origin, handleTryAgain }) => {
      </div>
      <Image src={smileyRedIcon} className="mt-10 mb-10" width={80} height={80} style={{ width: '5rem' }} alt="Smiley face" />
        <div className="w-full">
+        {/* 
          <Button className="mb-4 primary" text="View on Yelp" icon={yelpIcon} onClick={() => {handleYelpClick(business)}}/>
+         */}
          <Button className="mb-4 primary" text="Open in Google Maps" icon={mapsIcon} onClick={() => {handleGoogleMapsClick(business)}}/>
          <div className="mt-10 text-sm">
            <a className="cursor-pointer" onClick={handleTryAgain}>Try again</a>

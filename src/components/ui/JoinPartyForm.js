@@ -65,7 +65,7 @@ const JoinPartyForm = ({  }) => {
                 type="text"
                 required
             />
-            <Button type="submit" className="secondary" text={joinButtonText} name="joinParty" loading={joiningParty}/>
+            <Button type="submit" className="primary" text={joinButtonText} name="joinParty" loading={joiningParty}/>
             <Error error={joinError} />
         </Form>
     );
