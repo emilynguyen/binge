@@ -8,7 +8,6 @@ import StarRating from '@/components/ui/StarRating';
 import Transportation from '@/components/ui/Transportation';
 import getClosingTimeToday from "@/utils/getClosingTimeToday";
 
-const imageHeight = 600;
 
 /**
  * Extracts the neighborhood or locality from the address_components object.
@@ -40,19 +39,16 @@ function getNeighborhoodOrLocality(addressComponents) {
   return null;
 }
 
-function cleanTypes(types) {
-
-}
-
 
 const BusinessCard = ({ business, location }) => {
     const name = business?.name || 'Loading...';
     const image = business?.img_url || '';
     const rating = business?.rating || 0;
    // const categories = business?.types || [];
+   const summary = business?.details?.editorial_summary?.overview || null;
    const categories = [];
     const price = '$'.repeat(business?.price_level) || '';
-    const city =
+    const locality =
     business?.details?.address_components
       ? getNeighborhoodOrLocality(business.details.address_components) || 'Unknown'
       : 'Unknown';    const origin = location;
@@ -61,7 +57,7 @@ const BusinessCard = ({ business, location }) => {
     const destination = `${destinationCoords.lat || 0}, ${destinationCoords.lng || 0}`;
     
     const closing = business?.details?.opening_hours?.periods
-    ? getClosingTimeToday(business.details.opening_hours.periods) ?? '?'
+    ? getClosingTimeToday(business.details.opening_hours.periods) ?? 'N/A'
     : 'N/A';
 
 
@@ -104,8 +100,9 @@ const BusinessCard = ({ business, location }) => {
                 {/* Bottom left */}
                 <div className="text-left">
                     <h2 className="mb-4 serif text-balance">{name}</h2>
-                    <div className="mb-4"><StarRating rating={rating}/></div>
-                    <p className="pb-11">{city} {price && `/ ${price}`}</p>
+                    <div className="mb-2"><StarRating rating={rating}/></div>
+                    <p className="pb-8">{locality} {price && `/ ${price}`}</p>
+                    <p className="pb-8">{summary}</p>
                     <p>
                         {closing && (
                             <>

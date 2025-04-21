@@ -49,6 +49,9 @@
 
   --primary-typeface: "GT Alpina", serif;
   --secondary-typeface: "Basis Grotesque Mono Pro", monospace;
+  /*--secondary-typeface: "ABC Diatype Semi-Mono Unlicensed Trial", monospace; */
+
+
   font-size: 16px;
 }
 

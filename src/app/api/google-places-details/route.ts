@@ -29,11 +29,11 @@ export async function GET(request) {
   // Correct field names based on the documentation
   
   const fields = [
-    'type',
     'formatted_address',
     'address_component', 
     'opening_hours',
-    'photos'
+    'photos',
+    'editorial_summary'
   ].join(','); 
 
   //const fields = "";
