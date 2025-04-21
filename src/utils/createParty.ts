@@ -4,6 +4,7 @@ import getBusinessesFromYelp from "@/utils/getBusinessesFromYelp";
 import getPlacesFromFoursquare from "@/utils/getPlacesFromFoursquare";
 
 import axios from 'axios';
+import getPlacesFromGoogle from "./getPlacesFromGoogle";
 
 /**
  * Create a new party, add its first member, and populate businesses
@@ -21,7 +22,9 @@ async function createParty(locationName, locationCoords) {
         
         //const businesses = await getBusinessesFromYelp(locationCoords, 100);
 
-        const businesses = await getPlacesFromFoursquare(locationCoords, 50);
+        //const businesses = await getPlacesFromFoursquare(locationCoords, 10);
+
+        const businesses = await getPlacesFromGoogle(locationCoords, 25);
 
         if (!businesses) {
             throw "Foursquare returned no places for this address";

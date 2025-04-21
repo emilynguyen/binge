@@ -12,7 +12,7 @@ const YesMatch = ({ business, origin, handleTryAgain }) => {
   };
 
   const handleGoogleMapsClick = (business) => {
-    const destinationAddress = business.location.formatted_address;
+    const destinationAddress = business.details.formatted_address;
     const destination = business.name + ", " + destinationAddress;
    // const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&origin=${encodeURIComponent(origin)}`
 

@@ -10,29 +10,61 @@ import getClosingTimeToday from "@/utils/getClosingTimeToday";
 
 const imageHeight = 600;
 
+/**
+ * Extracts the neighborhood or locality from the address_components object.
+ * @param {Array} addressComponents - The address_components array from a Google Places API response.
+ * @returns {string|null} - The neighborhood or locality, or null if neither exists.
+ */
+function getNeighborhoodOrLocality(addressComponents) {
+  if (!Array.isArray(addressComponents)) {
+    throw new Error("Invalid input: addressComponents must be an array");
+  }
+
+  // Try to find the neighborhood
+  const neighborhood = addressComponents.find((component) =>
+    component.types.includes("neighborhood")
+  );
+  if (neighborhood) {
+    return neighborhood.short_name;
+  }
+
+  // If no neighborhood, fallback to locality
+  const locality = addressComponents.find((component) =>
+    component.types.includes("locality")
+  );
+  if (locality) {
+    return locality.short_name;
+  }
+
+  // Return null if neither neighborhood nor locality exists
+  return null;
+}
+
+function cleanTypes(types) {
+
+}
+
 
 const BusinessCard = ({ business, location }) => {
     const name = business?.name || 'Loading...';
+    const image = business?.img_url || '';
+    const rating = business?.rating || 0;
+   // const categories = business?.types || [];
+   const categories = [];
+    const price = '$'.repeat(business?.price_level) || '';
+    const city =
+    business?.details?.address_components
+      ? getNeighborhoodOrLocality(business.details.address_components) || 'Unknown'
+      : 'Unknown';    const origin = location;
 
-    const photo = business?.details?.photos?.[0] || {};
-    const imageSize = photo.width && photo.height
-        ? `${(imageHeight / photo.height) * photo.width}x${imageHeight}`
-        : '';
-    const image = photo.prefix && photo.suffix
-        ? `${photo.prefix}${imageSize}${photo.suffix}`
-        : '';
-
-    const rating = business?.details?.rating/2 || 0;
-    const categories = business?.categories || [];
+    const destinationCoords = business?.geometry?.location || {};
+    const destination = `${destinationCoords.lat || 0}, ${destinationCoords.lng || 0}`;
     
-    const price = '$'.repeat(business?.details?.price) || '';
-    const city = business?.location?.locality || 'Unknown';
-    const origin = location;
+    const closing = business?.details?.opening_hours?.periods
+    ? getClosingTimeToday(business.details.opening_hours.periods) ?? '?'
+    : 'N/A';
 
-    const destinationCoords = business?.geocodes?.main || {};
-    const destination = `${destinationCoords.latitude || 0}, ${destinationCoords.longitude || 0}`;
-    
-    const closing = getClosingTimeToday(business?.details?.hours || {});
+
     const [estimates, setEstimates] = useState(null);
 
     
@@ -64,7 +96,7 @@ const BusinessCard = ({ business, location }) => {
             {/* Top */}
             <div className="flex flex-wrap gap-2 sm:gap-4 mb-2 sm:mb-4">
                 {categories.map((item, index) => (
-                    <Pill key={index} text={item.short_name}/>
+                    <Pill key={index} text={item}/>
                 ))}
             </div>
             {/* Bottom */}

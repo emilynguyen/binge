@@ -1,74 +1,51 @@
 /**
- * Get the closing time for a business today.
- * If the business has already closed, show the most recent closing time.
- * If the business closes and reopens, use the upcoming closing time.
+ * Get the next closing time for a business today.
+ * Assumes the business is currently open.
  *
- * @param {Object} hours - The business hours object.
- * @returns {string} The next or most recent closing time in "h:mmA" format (e.g., "11:30PM"), or "hA" format (e.g., "9PM"), or a message if closed.
+ * @param {Array} periods - The array of periods, where each period contains "open" and "close" objects with "day" and "time".
+ * @returns {string} The next closing time in "h:mmA" format (e.g., "11:30PM"), or "hA" format (e.g., "9PM").
  */
-function getClosingTimeToday(hours) {
-  if (!hours || Object.keys(hours).length === 0) return null;
+function getClosingTimeToday(periods) {
+  if (!periods || periods.length === 0) return null;
 
-  const now = new Date(); // Current date and time
-  const currentDay = now.getUTCDay() === 0 ? 7 : now.getUTCDay(); // Map Sunday (0) to 7
-  const currentTime = parseInt(
-    `${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}`
-  ); // Current time as an integer (e.g., 0604)
+  try {
+    const now = new Date();
+    const currentDay = now.getUTCDay(); // Day of the week (0 for Sunday through 6 for Saturday)
+    const currentTime = parseInt(
+      `${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}`
+    ); // Current time as an integer (e.g., 0604)
 
-  // Filter today's schedule based on the current day
-  const todaySchedule = hours.regular.filter((entry) => entry.day === currentDay);
-  const yesterdaySchedule = hours.regular.filter((entry) => entry.day === (currentDay === 1 ? 7 : currentDay - 1));
+    // Helper function to format time in "h:mmA" or "hA" format
+    const formatTime = (time) => {
+      const closingHour = Math.floor(time / 100); // Extracts the hour
+      const closingMinute = time % 100; // Extracts the minute
+      const isPM = closingHour >= 12;
+      const formattedHour = closingHour > 12 ? closingHour - 12 : closingHour === 0 ? 12 : closingHour;
 
-  // Initialize variables to track recent and upcoming closing times
-  let recentClosingTime = null;
-  let upcomingClosingTime = null;
+      // Include minutes only if they are non-zero
+      return closingMinute > 0
+        ? `${formattedHour}:${closingMinute.toString().padStart(2, '0')}${isPM ? 'PM' : 'AM'}`
+        : `${formattedHour}${isPM ? 'PM' : 'AM'}`;
+    };
 
-  // Helper function to format time in "h:mmA" or "hA" format
-  const formatTime = (time) => {
-    const closingHour = Math.floor(time / 100); // Extracts the hour
-    const closingMinute = time % 100; // Extracts the minute
-    const isPM = closingHour >= 12;
-    const formattedHour = closingHour > 12 ? closingHour - 12 : closingHour === 0 ? 12 : closingHour;
+    // Find the next closing time for the current day
+    for (const period of periods) {
+      const closeDay = period.close.day;
+      const closeTime = parseInt(period.close.time);
 
-    // Include minutes only if they are non-zero
-    return closingMinute > 0
-      ? `${formattedHour}:${closingMinute.toString().padStart(2, '0')}${isPM ? 'PM' : 'AM'}`
-      : `${formattedHour}${isPM ? 'PM' : 'AM'}`;
-  };
-
-  // Process today's schedule
-  for (const period of todaySchedule) {
-    const closingTime = parseInt(period.close);
-
-    if (closingTime > currentTime) {
-      // First upcoming closing time
-      if (!upcomingClosingTime) {
-        upcomingClosingTime = closingTime;
+      // If the closing time is today and in the future, return it
+      if (closeDay === currentDay && closeTime > currentTime) {
+        return formatTime(closeTime);
       }
-    } else {
-      // Update most recent closing time (if already passed)
-      recentClosingTime = closingTime;
     }
+
+    // If no valid closing time is found, return null (this shouldn't happen if the place is open)
+    return null;
+
+  } catch {
+    return null;
   }
 
-  // Handle schedules that roll over past midnight (yesterday's closing times)
-  for (const period of yesterdaySchedule) {
-    const closingTime = parseInt(period.close);
-
-    // If the closing time is past midnight (e.g., 2:00 AM), adjust logic
-    if (closingTime < 1200 && currentTime < closingTime) {
-      upcomingClosingTime = closingTime;
-    } else if (closingTime < 1200 && currentTime >= closingTime) {
-      recentClosingTime = closingTime;
-    }
-  }
-
-  // Return the next closing time if available; otherwise, return the most recent closing time
-  return upcomingClosingTime
-    ? formatTime(upcomingClosingTime)
-    : recentClosingTime
-    ? formatTime(recentClosingTime)
-    : '?';
 }
 
 export default getClosingTimeToday;

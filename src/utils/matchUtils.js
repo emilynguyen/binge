@@ -34,7 +34,7 @@ async function setMatch(partyID, sessionID, businessRef, decision) {
 
     try {
         const partyRef = await readData(`/${partyID}`);
-        const businessIndex = partyRef.businesses.findIndex(business => business.fsq_id == businessRef.fsq_id
+        const businessIndex = partyRef.businesses.findIndex(business => business.place_id == businessRef.place_id
         );
 
         // If yes, set matches[sessionID] = true
@@ -52,7 +52,7 @@ async function setMatch(partyID, sessionID, businessRef, decision) {
         }
 
         // Mark this card as viewed
-        await pushData(`/${partyID}/members/${sessionID}/viewed`, { name: businessRef.name }, businessRef.fsq_id);
+        await pushData(`/${partyID}/members/${sessionID}/viewed`, { name: businessRef.name }, businessRef.place_id);
 
 
     } catch (err) {
